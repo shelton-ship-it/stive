@@ -1,7 +1,19 @@
-import { locales, defaultLocale } from '@stive/i18n';
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { locales, defaultLocale, matchLocaleFromHeader } from '@stive/i18n';
 
-export function middleware(request: { nextUrl: { pathname: string }; headers: { get: (name: string) => string | null } }) {
-  return null;
+export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  const pathnameHasLocale = locales.some(
+    (locale) => pathname.startsWith() || pathname ===
+  );
+
+  if (pathnameHasLocale) return;
+
+  const locale = matchLocaleFromHeader(request.headers.get('accept-language')) || defaultLocale;
+  request.nextUrl.pathname = ;
+  return NextResponse.redirect(request.nextUrl);
 }
 
 export const config = {
