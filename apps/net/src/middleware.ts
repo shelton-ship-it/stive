@@ -1,6 +1,7 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-import { locales, defaultLocale, matchLocaleFromHeader } from '@stive/i18n';
+import { NextRequest, NextResponse } from "next/server";
+
+const locales = ["en", "pt", "es", "fr", "de"];
+const defaultLocale = "en";
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -9,13 +10,21 @@ export function middleware(request: NextRequest) {
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
   );
 
-  if (pathnameHasLocale) return;
+  if (pathnameHasLocale) return NextResponse.next();
 
-  const locale = matchLocaleFromHeader(request.headers.get('accept-language')) || defaultLocale;
-  request.nextUrl.pathname = `/${locale}${pathname}`;
-  return NextResponse.redirect(request.nextUrl);
+  const locale =
+    request.headers
+      .get("accept-language")
+      ?.split(",")[0]
+      ?.split("-")[0] ?? defaultLocale;
+
+  const selectedLocale = locales.includes(locale) ? locale : defaultLocale;
+
+  return NextResponse.redirect(
+    new URL(`/${selectedLocale}${pathname}`, request.url)
+  );
 }
 
 export const config = {
-  matcher: ['/((?!_next|api|favicon.ico).*)'],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };
