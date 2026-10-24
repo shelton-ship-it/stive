@@ -26,8 +26,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
 
-      - name: Run Turbo Affected Build
-        run: pnpm exec turbo run build --affected
+      - name: Run Turbo Build
+        run: pnpm exec turbo run build
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
