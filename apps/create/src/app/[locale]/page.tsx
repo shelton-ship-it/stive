@@ -1,1 +1,4 @@
-import React from "react"; import { Button } from "@stive/ui"; import { AdSlot } from "@stive/ads"; export default function Page() { return <div><h1>Stive create</h1><Button>Action</Button><AdSlot /></div>; }
+import CreateSuiteLandingPage, { metadata } from "./create/page";
+
+export { metadata };
+export default CreateSuiteLandingPage;
