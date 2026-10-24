@@ -6,13 +6,13 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const pathnameHasLocale = locales.some(
-    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
+    (locale) => pathname.startsWith() || pathname ===
   );
 
   if (pathnameHasLocale) return;
 
   const locale = matchLocaleFromHeader(request.headers.get('accept-language')) || defaultLocale;
-  request.nextUrl.pathname = `/${locale}${pathname}`;
+  request.nextUrl.pathname = ;
   return NextResponse.redirect(request.nextUrl);
 }
 
