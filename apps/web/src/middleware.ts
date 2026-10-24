@@ -1,0 +1,1 @@
+import { NextResponse } from "next/server"; import type { NextRequest } from "next/server"; import { locales, defaultLocale } from "@stive/i18n"; export function middleware(request: NextRequest) { return NextResponse.next(); }

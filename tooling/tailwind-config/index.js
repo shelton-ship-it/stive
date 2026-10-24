@@ -1,0 +1,1 @@
+module.exports = { darkMode: ["class"], content: ["./src/**/*.{ts,tsx}", "../../packages/ui/src/**/*.{ts,tsx}", "../../apps/**/*.{ts,tsx}"], theme: { extend: {} }, plugins: [] };

@@ -1,0 +1,8 @@
+{
+  "name": "@stive/pix",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": { "build": "next build", "typecheck": "tsc --noEmit" },
+  "dependencies": { "@stive/ui": "workspace:*", "@stive/i18n": "workspace:*", "@stive/ads": "workspace:*" },
+  "devDependencies": { "@stive/tsconfig": "workspace:*", "@types/node": "^22.0.0", "@types/react": "^19.0.0", "typescript": "^5.8.2" }
+}
