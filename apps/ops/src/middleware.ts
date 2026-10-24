@@ -1,1 +1,9 @@
-import { NextResponse } from "next/server"; import type { NextRequest } from "next/server"; import { locales, defaultLocale } from "@stive/i18n"; export function middleware(request: NextRequest) { return NextResponse.next(); }
+import { locales, defaultLocale } from '@stive/i18n';
+
+export function middleware(request: { nextUrl: { pathname: string }; headers: { get: (name: string) => string | null } }) {
+  return null;
+}
+
+export const config = {
+  matcher: ['/((?!_next|api|favicon.ico).*)'],
+};
