@@ -54,9 +54,21 @@ importers:
       '@stive/ads':
         specifier: workspace:*
         version: link:../../packages/ads
+      '@stive/analytics':
+        specifier: workspace:*
+        version: link:../../packages/analytics
+      '@stive/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
+      '@stive/billing':
+        specifier: workspace:*
+        version: link:../../packages/billing
       '@stive/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
+      '@stive/quotas':
+        specifier: workspace:*
+        version: link:../../packages/quotas
       '@stive/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -91,9 +103,21 @@ importers:
       '@stive/ads':
         specifier: workspace:*
         version: link:../../packages/ads
+      '@stive/analytics':
+        specifier: workspace:*
+        version: link:../../packages/analytics
+      '@stive/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
+      '@stive/billing':
+        specifier: workspace:*
+        version: link:../../packages/billing
       '@stive/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
+      '@stive/quotas':
+        specifier: workspace:*
+        version: link:../../packages/quotas
       '@stive/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -165,9 +189,21 @@ importers:
       '@stive/ads':
         specifier: workspace:*
         version: link:../../packages/ads
+      '@stive/analytics':
+        specifier: workspace:*
+        version: link:../../packages/analytics
+      '@stive/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
+      '@stive/billing':
+        specifier: workspace:*
+        version: link:../../packages/billing
       '@stive/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
+      '@stive/quotas':
+        specifier: workspace:*
+        version: link:../../packages/quotas
       '@stive/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -303,9 +339,21 @@ importers:
       '@stive/ads':
         specifier: workspace:*
         version: link:../../packages/ads
+      '@stive/analytics':
+        specifier: workspace:*
+        version: link:../../packages/analytics
+      '@stive/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
+      '@stive/billing':
+        specifier: workspace:*
+        version: link:../../packages/billing
       '@stive/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
+      '@stive/quotas':
+        specifier: workspace:*
+        version: link:../../packages/quotas
       '@stive/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -340,9 +388,21 @@ importers:
       '@stive/ads':
         specifier: workspace:*
         version: link:../../packages/ads
+      '@stive/analytics':
+        specifier: workspace:*
+        version: link:../../packages/analytics
+      '@stive/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
+      '@stive/billing':
+        specifier: workspace:*
+        version: link:../../packages/billing
       '@stive/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
+      '@stive/quotas':
+        specifier: workspace:*
+        version: link:../../packages/quotas
       '@stive/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -414,9 +474,21 @@ importers:
       '@stive/ads':
         specifier: workspace:*
         version: link:../../packages/ads
+      '@stive/analytics':
+        specifier: workspace:*
+        version: link:../../packages/analytics
+      '@stive/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
+      '@stive/billing':
+        specifier: workspace:*
+        version: link:../../packages/billing
       '@stive/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
+      '@stive/quotas':
+        specifier: workspace:*
+        version: link:../../packages/quotas
       '@stive/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -451,9 +523,21 @@ importers:
       '@stive/ads':
         specifier: workspace:*
         version: link:../../packages/ads
+      '@stive/analytics':
+        specifier: workspace:*
+        version: link:../../packages/analytics
+      '@stive/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
+      '@stive/billing':
+        specifier: workspace:*
+        version: link:../../packages/billing
       '@stive/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
+      '@stive/quotas':
+        specifier: workspace:*
+        version: link:../../packages/quotas
       '@stive/ui':
         specifier: workspace:*
         version: link:../../packages/ui
