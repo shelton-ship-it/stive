@@ -23,7 +23,7 @@ export default function BoardPage() {
   };
 
   const crossLinks = [
-    { prompt: "Deseja partilhar o ecrã?", label: "Stive Live", href: "/live" },
+    { prompt: "Deseja partilhar o ecrã?", label: "Stive Live", href: "https://stivelive.com" },
   ];
 
   return (
@@ -43,7 +43,7 @@ export default function BoardPage() {
       </header>
 
       <main>
-        <Breadcrumbs productName="Board" productHref="/board" />
+        <Breadcrumbs domain="stiveboard.com" baseUrl="https://stiveboard.com" productName="Board" productPath="/board" />
 
         <div className="my-6">
           <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">

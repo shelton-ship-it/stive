@@ -1,15 +1,22 @@
 import React from "react";
 import Link from "next/link";
 
-export interface BreadcrumbItem {
-  label: string;
-  href?: string;
+export interface BreadcrumbProps {
+  domain: string;
+  baseUrl: string;
+  productName: string;
+  productPath?: string;
 }
 
-export function Breadcrumbs({ productName, productHref }: { productName: string; productHref: string }) {
-  const fullItems: BreadcrumbItem[] = [
-    { label: "stive.tech", href: "/" },
-    { label: productName, href: productHref },
+export function Breadcrumbs({
+  domain,
+  baseUrl,
+  productName,
+  productPath = "/",
+}: BreadcrumbProps) {
+  const fullItems = [
+    { label: domain, url: baseUrl },
+    { label: productName, url: `${baseUrl}${productPath}` },
   ];
 
   const breadcrumbListSchema = {
@@ -19,7 +26,7 @@ export function Breadcrumbs({ productName, productHref }: { productName: string;
       "@type": "ListItem",
       "position": index + 1,
       "name": item.label,
-      "item": item.href ? `https://stive.tech${item.href}` : undefined,
+      "item": item.url,
     })),
   };
 
@@ -32,7 +39,7 @@ export function Breadcrumbs({ productName, productHref }: { productName: string;
       <nav className="flex items-center space-x-2 text-sm text-slate-500 py-3 px-1" aria-label="Breadcrumb">
         <span className="md:hidden">
           <Link href="/" className="hover:text-blue-600 transition-colors font-medium text-slate-600">
-            stive.tech
+            {domain}
           </Link>
         </span>
         <div className="hidden md:flex items-center space-x-2">
@@ -41,9 +48,9 @@ export function Breadcrumbs({ productName, productHref }: { productName: string;
             return (
               <React.Fragment key={index}>
                 {index > 0 && <span className="text-slate-400 select-none">&gt;</span>}
-                {item.href && !isLast ? (
+                {!isLast ? (
                   <Link
-                    href={item.href}
+                    href="/"
                     className="hover:text-blue-600 transition-colors font-medium text-slate-600"
                   >
                     {item.label}

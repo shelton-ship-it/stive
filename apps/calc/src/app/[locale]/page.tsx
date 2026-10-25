@@ -22,8 +22,8 @@ export default function CalcPage() {
   };
 
   const crossLinks = [
-    { prompt: "Deseja converter um ficheiro?", label: "Stive Convert", href: "/convert" },
-    { prompt: "Deseja testar a sua internet?", label: "Stive Net", href: "/net" },
+    { prompt: "Deseja converter um ficheiro?", label: "Stive Convert", href: "https://stiveconvert.com" },
+    { prompt: "Deseja testar a sua internet?", label: "Stive Net", href: "https://stivenet.com" },
   ];
 
   return (
@@ -43,7 +43,7 @@ export default function CalcPage() {
       </header>
 
       <main>
-        <Breadcrumbs productName="Calc" productHref="/calc" />
+        <Breadcrumbs domain="stivecalc.com" baseUrl="https://stivecalc.com" productName="Calc" productPath="/calc" />
 
         <div className="my-6">
           <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">

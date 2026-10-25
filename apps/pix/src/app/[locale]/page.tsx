@@ -23,7 +23,7 @@ export default function PixPage() {
   };
 
   const crossLinks = [
-    { prompt: "Deseja criar um vetor?", label: "Stive Vector", href: "/create/vector" },
+    { prompt: "Deseja criar um vetor?", label: "Stive Vector", href: "https://stive.tech/create/vector" },
   ];
 
   return (
@@ -43,7 +43,7 @@ export default function PixPage() {
       </header>
 
       <main>
-        <Breadcrumbs productName="Pix" productHref="/pix" />
+        <Breadcrumbs domain="stivepix.com" baseUrl="https://stivepix.com" productName="Pix" productPath="/pix" />
 
         <div className="my-6">
           <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">

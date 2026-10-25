@@ -23,7 +23,7 @@ export default function LiveAppPage() {
   };
 
   const crossLinks = [
-    { prompt: "Deseja gravar o ecrã?", label: "Stive Record", href: "/connect/record" },
+    { prompt: "Deseja gravar o ecrã?", label: "Stive Record", href: "https://stive.tech/connect/record" },
   ];
 
   return (
@@ -43,7 +43,7 @@ export default function LiveAppPage() {
       </header>
 
       <main>
-        <Breadcrumbs productName="Live" productHref="/live" />
+        <Breadcrumbs domain="stivelive.com" baseUrl="https://stivelive.com" productName="Live" productPath="/live" />
 
         <div className="my-6">
           <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">

@@ -22,7 +22,7 @@ export default function NetPage() {
   };
 
   const crossLinks = [
-    { prompt: "Deseja fazer cálculos?", label: "Stive Calc", href: "/calc" },
+    { prompt: "Deseja fazer cálculos?", label: "Stive Calc", href: "https://stivecalc.com" },
   ];
 
   return (
@@ -42,7 +42,7 @@ export default function NetPage() {
       </header>
 
       <main>
-        <Breadcrumbs productName="Net" productHref="/net" />
+        <Breadcrumbs domain="stivenet.com" baseUrl="https://stivenet.com" productName="Net" productPath="/net" />
 
         <div className="my-6">
           <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">

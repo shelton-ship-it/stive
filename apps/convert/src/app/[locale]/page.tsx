@@ -23,7 +23,7 @@ export default function ConvertPage() {
   };
 
   const crossLinks = [
-    { prompt: "Deseja editar o PDF convertido?", label: "Stive Docs", href: "/work/docs" },
+    { prompt: "Deseja editar o PDF convertido?", label: "Stive Docs", href: "https://stive.tech/work/docs" },
   ];
 
   return (
@@ -43,7 +43,7 @@ export default function ConvertPage() {
       </header>
 
       <main>
-        <Breadcrumbs productName="Convert" productHref="/convert" />
+        <Breadcrumbs domain="stiveconvert.com" baseUrl="https://stiveconvert.com" productName="Convert" productPath="/convert" />
 
         <div className="my-6">
           <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">

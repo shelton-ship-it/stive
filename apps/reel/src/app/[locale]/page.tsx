@@ -23,7 +23,7 @@ export default function ReelPage() {
   };
 
   const crossLinks = [
-    { prompt: "Deseja criar motion graphics?", label: "Stive Motion", href: "/create/motion" },
+    { prompt: "Deseja criar motion graphics?", label: "Stive Motion", href: "https://stive.tech/create/motion" },
   ];
 
   return (
@@ -43,7 +43,7 @@ export default function ReelPage() {
       </header>
 
       <main>
-        <Breadcrumbs productName="Reel" productHref="/reel" />
+        <Breadcrumbs domain="stivereel.com" baseUrl="https://stivereel.com" productName="Reel" productPath="/reel" />
 
         <div className="my-6">
           <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">
