@@ -3,13 +3,18 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "dev": "next dev -p 3009",
     "build": "tsc --noEmit",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@stive/ui": "workspace:*",
+    "@stive/auth": "workspace:*",
+    "@stive/billing": "workspace:*",
     "@stive/i18n": "workspace:*",
+    "@stive/quotas": "workspace:*",
     "@stive/ads": "workspace:*",
+    "@stive/analytics": "workspace:*",
     "next": "^15.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
@@ -18,7 +23,7 @@
     "@stive/tsconfig": "workspace:*",
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
-    "typescript": "^5.8.2",
-    "@types/react-dom": "^19.0.0"
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.8.2"
   }
 }

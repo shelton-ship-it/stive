@@ -4,7 +4,15 @@ const locales = ["en", "pt", "es", "fr", "de"];
 const defaultLocale = "en";
 
 export function middleware(request: NextRequest) {
+  const host = request.headers.get("host") || "";
   const { pathname } = request.nextUrl;
+
+  if (host.includes("stivenet.com")) {
+    return NextResponse.redirect(
+      new URL(`https://stive.tech/net${pathname}`),
+      301
+    );
+  }
 
   const pathnameHasLocale = locales.some(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`

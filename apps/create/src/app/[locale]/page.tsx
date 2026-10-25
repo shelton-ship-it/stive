@@ -1,1 +1,5 @@
-import React from "react"; import { Button } from "@stive/ui"; import { AdSlot } from "@stive/ads"; export default function Page() { return <div><h1>Stive create</h1><Button>Action</Button><AdSlot /></div>; }
+import { redirect } from "next/navigation";
+
+export default function RootCreateRedirect() {
+  redirect("/create");
+}
