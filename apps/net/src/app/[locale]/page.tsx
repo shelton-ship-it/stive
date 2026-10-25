@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   title: "Stive Net — Internet Speed Test",
   description: "Teste a velocidade da sua ligação à internet (ping, download e upload) em tempo real.",
   keywords: ["speed test", "stive net", "teste de velocidade", "teste velocidade internet"],
+  alternates: {
+    canonical: "https://stive.tech/net",
+  },
 };
 
 export default function NetPage() {
@@ -19,10 +22,11 @@ export default function NetPage() {
     "operatingSystem": "All",
     "description": "Teste de velocidade de internet grátis com Stive Net.",
     "keywords": "speed test",
+    "url": "https://stive.tech/net",
   };
 
   const crossLinks = [
-    { prompt: "Deseja fazer cálculos?", label: "Stive Calc", href: "https://stivecalc.com" },
+    { prompt: "Deseja fazer cálculos?", label: "Stive Calc", href: "https://stive.tech/calc" },
   ];
 
   return (
@@ -37,12 +41,12 @@ export default function NetPage() {
           <span>🌐</span> Stive Net
         </div>
         <span className="text-xs px-2.5 py-1 bg-slate-200 text-slate-700 rounded-full font-medium">
-          stivenet.com
+          stive.tech/net
         </span>
       </header>
 
       <main>
-        <Breadcrumbs domain="stivenet.com" baseUrl="https://stivenet.com" productName="Net" productPath="/net" />
+        <Breadcrumbs domain="stive.tech" baseUrl="https://stive.tech" productName="Net" productPath="/net" />
 
         <div className="my-6">
           <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">

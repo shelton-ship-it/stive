@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   title: "Stive Calc — Free Online Calculator",
   description: "Calculadora online grátis, rápida e precisa para matemática, finanças e conversões.",
   keywords: ["calculator", "stive calc", "calculadora online", "math calculator"],
+  alternates: {
+    canonical: "https://stive.tech/calc",
+  },
 };
 
 export default function CalcPage() {
@@ -19,11 +22,12 @@ export default function CalcPage() {
     "operatingSystem": "All",
     "description": "Calculadora online grátis com Stive Calc.",
     "keywords": "calculator",
+    "url": "https://stive.tech/calc",
   };
 
   const crossLinks = [
-    { prompt: "Deseja converter um ficheiro?", label: "Stive Convert", href: "https://stiveconvert.com" },
-    { prompt: "Deseja testar a sua internet?", label: "Stive Net", href: "https://stivenet.com" },
+    { prompt: "Deseja converter um ficheiro?", label: "Stive Convert", href: "https://stive.tech/convert" },
+    { prompt: "Deseja testar a sua internet?", label: "Stive Net", href: "https://stive.tech/net" },
   ];
 
   return (
@@ -38,12 +42,12 @@ export default function CalcPage() {
           <span>🧮</span> Stive Calc
         </div>
         <span className="text-xs px-2.5 py-1 bg-slate-200 text-slate-700 rounded-full font-medium">
-          stivecalc.com
+          stive.tech/calc
         </span>
       </header>
 
       <main>
-        <Breadcrumbs domain="stivecalc.com" baseUrl="https://stivecalc.com" productName="Calc" productPath="/calc" />
+        <Breadcrumbs domain="stive.tech" baseUrl="https://stive.tech" productName="Calc" productPath="/calc" />
 
         <div className="my-6">
           <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">

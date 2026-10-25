@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   title: "Stive Convert — Convert DOCX to PDF Online",
   description: "Converta ficheiros DOCX, XLSX e imagens para PDF instantaneamente no navegador com o Filee Engine.",
   keywords: ["convert docx to pdf", "stive convert", "converter docx em pdf", "filee engine"],
+  alternates: {
+    canonical: "https://stive.tech/convert",
+  },
 };
 
 export default function ConvertPage() {
@@ -20,6 +23,7 @@ export default function ConvertPage() {
     "operatingSystem": "All",
     "description": "Conversão de documentos e DOCX para PDF com Filee Engine.",
     "keywords": "convert docx to pdf",
+    "url": "https://stive.tech/convert",
   };
 
   const crossLinks = [
@@ -38,12 +42,12 @@ export default function ConvertPage() {
           <span>🔄</span> Stive Convert
         </div>
         <span className="text-xs px-2.5 py-1 bg-slate-200 text-slate-700 rounded-full font-medium">
-          stiveconvert.com
+          stive.tech/convert
         </span>
       </header>
 
       <main>
-        <Breadcrumbs domain="stiveconvert.com" baseUrl="https://stiveconvert.com" productName="Convert" productPath="/convert" />
+        <Breadcrumbs domain="stive.tech" baseUrl="https://stive.tech" productName="Convert" productPath="/convert" />
 
         <div className="my-6">
           <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">
