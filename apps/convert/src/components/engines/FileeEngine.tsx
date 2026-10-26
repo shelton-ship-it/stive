@@ -64,14 +64,32 @@ export function FileeEngine() {
   const convertTextDocument = async (file: File, format: string): Promise<Blob> => {
     const textContent = await file.text();
     const baseName = file.name.substring(0, file.name.lastIndexOf(".")) || file.name;
+    const isCSV = file.name.endsWith(".csv") || textContent.includes(",");
 
     if (format === "JSON") {
       let jsonObj: unknown;
-      try {
-        jsonObj = JSON.parse(textContent);
-      } catch {
-        // If text is not valid JSON, create a structure with content
-        jsonObj = { filename: baseName, content: textContent };
+      if (isCSV && !textContent.trim().startsWith("{") && !textContent.trim().startsWith("[")) {
+        // Parse CSV to JSON array
+        const lines = textContent.split("\n").filter((l) => l.trim().length > 0);
+        if (lines.length > 0) {
+          const headers = lines[0]!.split(",").map((h) => h.trim().replace(/^"|"$/g, ""));
+          jsonObj = lines.slice(1).map((line) => {
+            const values = line.split(",").map((v) => v.trim().replace(/^"|"$/g, ""));
+            const obj: Record<string, string> = {};
+            headers.forEach((h, idx) => {
+              obj[h || `col${idx + 1}`] = values[idx] || "";
+            });
+            return obj;
+          });
+        } else {
+          jsonObj = [];
+        }
+      } else {
+        try {
+          jsonObj = JSON.parse(textContent);
+        } catch {
+          jsonObj = { filename: baseName, content: textContent };
+        }
       }
       return new Blob([JSON.stringify(jsonObj, null, 2)], { type: "application/json" });
     }
@@ -81,11 +99,22 @@ export function FileeEngine() {
     }
 
     if (format === "HTML") {
-      const htmlDoc = `<!DOCTYPE html><html><head><title>${baseName}</title></head><body><pre>${textContent}</pre></body></html>`;
+      let bodyHtml = `<pre>${textContent}</pre>`;
+      if (isCSV && !textContent.trim().startsWith("<")) {
+        const lines = textContent.split("\n").filter((l) => l.trim().length > 0);
+        if (lines.length > 0) {
+          const tableRows = lines.map((line, idx) => {
+            const cells = line.split(",").map((c) => c.trim().replace(/^"|"$/g, ""));
+            const tag = idx === 0 ? "th" : "td";
+            return `<tr>${cells.map((c) => `<${tag}>${c}</${tag}>`).join("")}</tr>`;
+          });
+          bodyHtml = `<table border="1" cellpadding="8" style="border-collapse:collapse;font-family:sans-serif;">${tableRows.join("\n")}</table>`;
+        }
+      }
+      const htmlDoc = `<!DOCTYPE html><html><head><title>${baseName}</title></head><body style="padding:20px;"><h2>${baseName}</h2>${bodyHtml}</body></html>`;
       return new Blob([htmlDoc], { type: "text/html;charset=utf-8" });
     }
 
-    // Default return text blob
     return new Blob([textContent], { type: "text/plain" });
   };
 
