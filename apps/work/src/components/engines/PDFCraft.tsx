@@ -98,10 +98,10 @@ export function PDFCraft() {
 
     if (firstPage) {
       const { width } = firstPage.getSize();
-      firstPage.drawText(signatureText, {
-        x: width - 250,
+      firstPage.drawText(`✍️ ${signatureText}`, {
+        x: width - 260,
         y: 40,
-        size: 12,
+        size: 11,
         font,
         color: rgb(0.1, 0.3, 0.8),
       });
@@ -241,15 +241,15 @@ export function PDFCraft() {
               : "border-slate-200 hover:border-slate-300 text-slate-700"
           }`}
         >
-          <div className="text-base mb-1">✍️ Assinar</div>
-          <div className="text-xs text-slate-500 font-normal">Adicionar assinatura digital</div>
+          <div className="text-base mb-1">✍️ Assinar Visual</div>
+          <div className="text-xs text-slate-500 font-normal">Estampar rubrica/assinatura visual</div>
         </button>
       </div>
 
       {activeTab === "sign" && (
         <div className="mb-6 bg-slate-50 p-4 rounded-lg border border-slate-200">
           <label className="block text-xs font-semibold text-slate-700 mb-1">
-            Texto da Assinatura:
+            Texto da Assinatura Visual:
           </label>
           <input
             type="text"
@@ -258,6 +258,9 @@ export function PDFCraft() {
             className="w-full px-3 py-2 border border-slate-300 rounded text-sm outline-none focus:border-blue-500"
             placeholder="Ex: Assinado por João Silva em 2025-05-20"
           />
+          <span className="text-[11px] text-slate-400 mt-1 block">
+            Nota: Aplica uma estampa/rubrica visual nas páginas do documento.
+          </span>
         </div>
       )}
 

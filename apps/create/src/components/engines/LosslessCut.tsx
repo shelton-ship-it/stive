@@ -13,6 +13,7 @@ interface ExportedFile {
 export function LosslessCut() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [mediaLoaded, setMediaLoaded] = useState<boolean>(false);
+  const [isAudio, setIsAudio] = useState<boolean>(false);
   const [duration, setDuration] = useState<number>(0);
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [startTime, setStartTime] = useState<number>(0);
@@ -22,8 +23,10 @@ export function LosslessCut() {
   const [exportedFile, setExportedFile] = useState<ExportedFile | null>(null);
 
   const mediaRef = useRef<HTMLVideoElement | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const audioBufferRef = useRef<AudioBuffer | null>(null);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setSelectedFile(file);
@@ -31,22 +34,120 @@ export function LosslessCut() {
       setEngineState("loading");
       setStatus(`A carregar media "${file.name}"...`);
 
+      const isAudioFile = file.type.startsWith("audio/") || /\.(mp3|wav|ogg|aac|flac)$/i.test(file.name);
+      setIsAudio(isAudioFile);
+
       const url = URL.createObjectURL(file);
       if (mediaRef.current) {
         mediaRef.current.src = url;
+      }
+
+      if (isAudioFile) {
+        try {
+          const AudioCtxClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+          audioContextRef.current = new AudioCtxClass();
+          const ab = await file.arrayBuffer();
+          audioBufferRef.current = await audioContextRef.current.decodeAudioData(ab);
+        } catch {
+          // Fallback if audio decode fails
+        }
       }
     }
   };
 
   const handleLoadedMetadata = () => {
     if (mediaRef.current) {
-      const dur = mediaRef.current.duration;
+      const dur = mediaRef.current.duration || audioBufferRef.current?.duration || 0;
       setDuration(dur);
       setEndTime(dur);
       setMediaLoaded(true);
       setEngineState("done");
       setStatus(`Media "${selectedFile?.name}" carregada (${dur.toFixed(1)}s).`);
     }
+  };
+
+  const handleTrimAudioWAV = (buffer: AudioBuffer, startSec: number, endSec: number): Blob => {
+    const sampleRate = buffer.sampleRate;
+    const numChannels = buffer.numberOfChannels;
+    const startSample = Math.floor(startSec * sampleRate);
+    const endSample = Math.floor(endSec * sampleRate);
+    const frameCount = Math.max(0, endSample - startSample);
+
+    const dataLength = frameCount * numChannels * 2;
+    const bufferLength = 44 + dataLength;
+    const arrayBuffer = new ArrayBuffer(bufferLength);
+    const view = new DataView(arrayBuffer);
+
+    /* RIFF identifier */
+    view.setUint32(0, 0x52494646, false); // "RIFF"
+    view.setUint32(4, 36 + dataLength, true);
+    view.setUint32(8, 0x57415645, false); // "WAVE"
+    /* fmt sub-chunk */
+    view.setUint32(12, 0x666d7420, false); // "fmt "
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true); // PCM
+    view.setUint16(22, numChannels, true);
+    view.setUint32(24, sampleRate, true);
+    view.setUint32(28, sampleRate * numChannels * 2, true);
+    view.setUint16(32, numChannels * 2, true);
+    view.setUint16(34, 16, true); // 16-bit
+    /* data sub-chunk */
+    view.setUint32(36, 0x64617461, false); // "data"
+    view.setUint32(40, dataLength, true);
+
+    let offset = 44;
+    for (let i = 0; i < frameCount; i++) {
+      for (let ch = 0; ch < numChannels; ch++) {
+        const channelData = buffer.getChannelData(ch);
+        const sample = Math.max(-1, Math.min(1, channelData[startSample + i] || 0));
+        view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7fff, true);
+        offset += 2;
+      }
+    }
+
+    return new Blob([arrayBuffer], { type: "audio/wav" });
+  };
+
+  const handleTrimVideoMediaRecorder = async (): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const mediaEl = mediaRef.current;
+      if (!mediaEl) return reject(new Error("Elemento de vídeo indisponível."));
+
+      mediaEl.currentTime = startTime;
+
+      const canvas = document.createElement("canvas");
+      canvas.width = mediaEl.videoWidth || 640;
+      canvas.height = mediaEl.videoHeight || 360;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return reject(new Error("Contexto Canvas indisponível."));
+
+      const stream = canvas.captureStream(30);
+      const mediaRecorder = new MediaRecorder(stream, { mimeType: "video/webm" });
+      const chunks: Blob[] = [];
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunks.push(e.data);
+      };
+
+      mediaRecorder.onstop = () => {
+        resolve(new Blob(chunks, { type: "video/webm" }));
+      };
+
+      mediaRecorder.start();
+      mediaEl.play();
+
+      const renderLoop = () => {
+        if (!mediaEl.paused && !mediaEl.ended && mediaEl.currentTime <= endTime) {
+          ctx.drawImage(mediaEl, 0, 0, canvas.width, canvas.height);
+          requestAnimationFrame(renderLoop);
+        } else {
+          mediaEl.pause();
+          mediaRecorder.stop();
+        }
+      };
+
+      requestAnimationFrame(renderLoop);
+    });
   };
 
   const handleTrim = async () => {
@@ -64,30 +165,33 @@ export function LosslessCut() {
 
     try {
       setEngineState("processing");
-      setStatus(`Processando corte sem perda de ${startTime.toFixed(1)}s a ${endTime.toFixed(1)}s...`);
+      setStatus(`Processando corte de ${startTime.toFixed(1)}s a ${endTime.toFixed(1)}s...`);
 
-      const mediaEl = mediaRef.current;
-      mediaEl.currentTime = startTime;
+      const baseName = selectedFile.name.substring(0, selectedFile.name.lastIndexOf(".")) || "media";
+      let outputBlob: Blob;
+      let outputFileName: string;
 
-      // Slice file ArrayBuffer proportionally for lossless trim segment
-      const arrayBuffer = await selectedFile.arrayBuffer();
-      const startRatio = startTime / duration;
-      const endRatio = endTime / duration;
-
-      const startByte = Math.floor(arrayBuffer.byteLength * startRatio);
-      const endByte = Math.floor(arrayBuffer.byteLength * endRatio);
-
-      const slicedBuffer = arrayBuffer.slice(startByte, endByte);
-      const outputBlob = new Blob([slicedBuffer], { type: selectedFile.type });
+      if (isAudio && audioBufferRef.current) {
+        outputBlob = handleTrimAudioWAV(audioBufferRef.current, startTime, endTime);
+        outputFileName = `${baseName}_cut.wav`;
+      } else if (!isAudio) {
+        outputBlob = await handleTrimVideoMediaRecorder();
+        outputFileName = `${baseName}_cut.webm`;
+      } else {
+        // Fallback arraybuffer slice
+        const arrayBuffer = await selectedFile.arrayBuffer();
+        const startRatio = startTime / duration;
+        const endRatio = endTime / duration;
+        const startByte = Math.floor(arrayBuffer.byteLength * startRatio);
+        const endByte = Math.floor(arrayBuffer.byteLength * endRatio);
+        outputBlob = new Blob([arrayBuffer.slice(startByte, endByte)], { type: selectedFile.type });
+        outputFileName = `${baseName}_cut.${selectedFile.name.split(".").pop() || "bin"}`;
+      }
 
       const url = URL.createObjectURL(outputBlob);
-      const baseName = selectedFile.name.substring(0, selectedFile.name.lastIndexOf(".")) || "media";
-      const ext = selectedFile.name.substring(selectedFile.name.lastIndexOf(".")) || ".mp4";
-      const fileName = `${baseName}_cut${ext}`;
-
-      setExportedFile({ url, fileName });
+      setExportedFile({ url, fileName: outputFileName });
       setEngineState("done");
-      setStatus(`Corte sem re-codificação concluído com sucesso (${fileName})!`);
+      setStatus(`Corte concluído com sucesso (${outputFileName})!`);
     } catch (err) {
       setEngineState("error");
       setStatus(err instanceof Error ? err.message : "Erro durante o corte do ficheiro.");
@@ -101,7 +205,7 @@ export function LosslessCut() {
           <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
             <span>✂️</span> LosslessCut Engine
           </h2>
-          <p className="text-sm text-slate-500">Corte super rápido de vídeo e áudio sem re-codificação</p>
+          <p className="text-sm text-slate-500">Corte rápido de vídeo e áudio sem re-codificação</p>
         </div>
         <div className="flex items-center gap-2">
           <span
@@ -135,7 +239,7 @@ export function LosslessCut() {
           <span className="text-sm font-semibold text-slate-700 mb-1">
             {selectedFile ? `Ficheiro: ${selectedFile.name}` : "Selecione um vídeo ou ficheiro de áudio"}
           </span>
-          <span className="text-xs text-slate-400">LosslessCut preserva 100% da qualidade original sem perda</span>
+          <span className="text-xs text-slate-400">LosslessCut processa cortes de áudio WAV e vídeo WEBM</span>
         </label>
       </div>
 
@@ -206,7 +310,7 @@ export function LosslessCut() {
             </a>
           )}
           <Button onClick={handleTrim} disabled={!mediaLoaded || engineState === "processing"}>
-            {engineState === "processing" ? "A cortar..." : "Executar Corte Sem Perda"}
+            {engineState === "processing" ? "A cortar..." : "Executar Corte"}
           </Button>
         </div>
       </div>

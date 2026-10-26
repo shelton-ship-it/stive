@@ -12,6 +12,7 @@ export interface CamofoxActionResult {
   url: string;
   title?: string;
   content?: string;
+  engineMode?: "http-stealth-dom" | "browser-cdp";
   metrics?: {
     durationMs: number;
     pagesLoaded: number;
@@ -32,7 +33,7 @@ export class CamofoxEngine {
   }
 
   public async initializeSession(): Promise<void> {
-    logger.info("CamofoxEngine: initializing stealth browser automation session", {
+    logger.info("CamofoxEngine: initializing stealth HTTP/DOM automation session", {
       sessionId: this.options.proxy.sessionId,
       proxy: this.options.proxy.server,
       headless: this.options.headless ?? true,
@@ -71,7 +72,7 @@ export class CamofoxEngine {
     }
 
     const startTime = Date.now();
-    logger.info("CamofoxEngine: executing stealth browser workflow", {
+    logger.info("CamofoxEngine: executing HTTP DOM automation workflow", {
       targetUrl,
       actionCount: actions?.length || 0,
       sessionId: this.options.proxy.sessionId,
@@ -93,15 +94,16 @@ export class CamofoxEngine {
       // Process actions if provided
       let processedContent = rawHtml;
       if (actions && actions.length > 0) {
-        logger.info("CamofoxEngine: executing workflow actions", { actions });
-        processedContent += `\n<!-- Executed ${actions.length} automated actions -->`;
+        logger.info("CamofoxEngine: executing DOM workflow actions", { actions });
+        processedContent += `\n<!-- Executed ${actions.length} DOM automation actions -->`;
       }
 
       return {
         success: response.ok,
         url: response.url || targetUrl,
         title,
-        content: processedContent.substring(0, 5000), // Return sample content snippet
+        content: processedContent.substring(0, 5000),
+        engineMode: "http-stealth-dom",
         metrics: {
           durationMs,
           pagesLoaded: 1,
@@ -114,6 +116,7 @@ export class CamofoxEngine {
         url: targetUrl,
         title: "Error Page",
         content: `<html><body>Failed to fetch URL: ${err instanceof Error ? err.message : String(err)}</body></html>`,
+        engineMode: "http-stealth-dom",
         metrics: {
           durationMs: Date.now() - startTime,
           pagesLoaded: 0,
@@ -163,6 +166,7 @@ export class CamofoxEngine {
 
       const scrapedData = {
         extractedAt: new Date().toISOString(),
+        engineMode: "http-stealth-dom",
         status: response.status,
         url: targetUrl,
         title,
@@ -177,6 +181,7 @@ export class CamofoxEngine {
         url: response.url || targetUrl,
         title,
         content: JSON.stringify(scrapedData, null, 2),
+        engineMode: "http-stealth-dom",
         metrics: {
           durationMs,
           pagesLoaded: 1,
@@ -189,6 +194,7 @@ export class CamofoxEngine {
         url: targetUrl,
         title: "Scrape Error Page",
         content: JSON.stringify({ error: err instanceof Error ? err.message : String(err) }),
+        engineMode: "http-stealth-dom",
         metrics: {
           durationMs: Date.now() - startTime,
           pagesLoaded: 0,

@@ -37,7 +37,7 @@ export function PiikEngine() {
       const settings = videoTrack?.getSettings();
       const resolution = settings?.width && settings?.height ? `${settings.width}x${settings.height}` : "HD (Nativo)";
 
-      // Setup RTCPeerConnection for P2P streaming setup
+      // Setup RTCPeerConnection for WebRTC P2P offer generation
       const pc = new RTCPeerConnection({
         iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
       });
@@ -62,7 +62,7 @@ export function PiikEngine() {
 
       setIsSharing(true);
       setEngineState("done");
-      setStatus("Partilha de ecrã WebRTC ativa via Piik Engine.");
+      setStatus("Partilha de ecrã local e oferta WebRTC geradas com sucesso.");
     } catch (err) {
       setEngineState("error");
       setStatus(err instanceof Error ? err.message : "Erro ao iniciar partilha de ecrã WebRTC.");
@@ -111,7 +111,7 @@ export function PiikEngine() {
           <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
             <span>📡</span> Piik WebRTC Engine (Stive Live)
           </h2>
-          <p className="text-sm text-slate-500">Transmissão e partilha de ecrã P2P instantânea via WebRTC</p>
+          <p className="text-sm text-slate-500">Transmissão local e preparação de partilha de ecrã P2P WebRTC</p>
         </div>
         <div className="flex items-center gap-2">
           <span
@@ -123,7 +123,7 @@ export function PiikEngine() {
                 : "bg-slate-50 text-slate-600 border-slate-200"
             }`}
           >
-            {isSharing ? "EM DIRETO (P2P)" : engineState.toUpperCase()}
+            {isSharing ? "CAPTURA ATIVA (WebRTC)" : engineState.toUpperCase()}
           </span>
         </div>
       </div>
@@ -140,7 +140,7 @@ export function PiikEngine() {
           <div className="text-center text-white py-12">
             <div className="text-4xl mb-3">🖥️ Transmissão Parada</div>
             <p className="text-slate-400 text-xs max-w-sm">
-              Conexão peer-to-peer encriptada de ponta a ponta sem instalação de plugins.
+              Captura local e negociação de sessão P2P WebRTC. Transmissão remota requer servidor de sinalização WebSocket ativo.
             </p>
           </div>
         )}
@@ -154,7 +154,7 @@ export function PiikEngine() {
           </div>
           {streamInfo.sdpOffer && (
             <div className="text-slate-500 font-mono text-[11px] truncate">
-              SDP Offer WebRTC: {streamInfo.sdpOffer}
+              SDP Offer Local WebRTC: {streamInfo.sdpOffer}
             </div>
           )}
         </div>

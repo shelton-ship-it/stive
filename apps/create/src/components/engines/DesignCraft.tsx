@@ -136,7 +136,7 @@ export function DesignCraft() {
     });
   };
 
-  const handleExport = (format: "PNG" | "PDF/X") => {
+  const handleExport = (format: "PNG" | "PDF") => {
     try {
       setEngineState("processing");
       setStatus(`Exportando publicação em ${format} via DesignCraft Engine...`);
@@ -147,13 +147,13 @@ export function DesignCraft() {
       canvas.toBlob((blob) => {
         if (!blob) throw new Error("Falha ao gerar o layout de publicação.");
         const url = URL.createObjectURL(blob);
-        const ext = format === "PDF/X" ? "pdf" : "png";
+        const ext = format === "PDF" ? "pdf" : "png";
         const fileName = `stive_designcraft_${preset}.${ext}`;
 
         setExportedFile({ url, fileName });
         setEngineState("done");
         setStatus(`Exportação em ${format} (${fileName}) concluída com sucesso!`);
-      }, format === "PDF/X" ? "application/pdf" : "image/png");
+      }, format === "PDF" ? "application/pdf" : "image/png");
     } catch (err) {
       setEngineState("error");
       setStatus(err instanceof Error ? err.message : `Erro ao exportar ${format}`);
@@ -167,7 +167,7 @@ export function DesignCraft() {
           <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
             <span>📐</span> DesignCraft Engine
           </h2>
-          <p className="text-sm text-slate-500">Motor de editoração eletrônica e diagramação gráfica gráfica (Layout Publishing)</p>
+          <p className="text-sm text-slate-500">Motor de editoração eletrônica e diagramação gráfica (Layout Publishing)</p>
         </div>
         <div className="flex items-center gap-2">
           <span
@@ -310,7 +310,7 @@ export function DesignCraft() {
               📥 Descarregar {exportedFile.fileName}
             </a>
           )}
-          <Button variant="outline" onClick={() => handleExport("PDF/X")}>Exportar PDF/X</Button>
+          <Button variant="outline" onClick={() => handleExport("PDF")}>Exportar PDF</Button>
           <Button onClick={() => handleExport("PNG")}>Exportar PNG HD</Button>
         </div>
       </div>
