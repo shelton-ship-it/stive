@@ -2,18 +2,27 @@
   "name": "@stive/admin",
   "version": "0.0.1",
   "private": true,
+  "type": "module",
   "scripts": {
-    "build": "tsc --noEmit",
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview --port 3000",
     "typecheck": "tsc --noEmit"
   },
-  "devDependencies": {
-    "@stive/tsconfig": "workspace:*",
-    "typescript": "^5.8.2",
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0"
-  },
   "dependencies": {
+    "@stive/auth": "workspace:*",
+    "@stive/ui": "workspace:*",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.2.0"
+  },
+  "devDependencies": {
+    "@stive/tailwind-config": "workspace:*",
+    "@stive/tsconfig": "workspace:*",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.8.2",
+    "vite": "^6.1.1"
   }
 }
