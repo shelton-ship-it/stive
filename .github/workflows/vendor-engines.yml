@@ -1,0 +1,57 @@
+name: Vendor Engines
+
+on:
+  workflow_dispatch:
+
+jobs:
+  vendor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/vendor-real-engines
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Clone and vendor all engines
+        run: |
+          set -e
+          declare -A repos=(
+            [excalidraw]="https://github.com/excalidraw/excalidraw"
+            [piik]="https://github.com/TNTcraftHIM/Piik"
+            [filee]="https://github.com/KnifeLemon/Filee"
+            [pdfcraft]="https://github.com/storytold/pdfcraft"
+            [wordcraft]="https://github.com/storytold/wordcraft"
+            [gridcraft]="https://github.com/storytold/gridcraft"
+            [lightcraft]="https://github.com/storytold/lightcraft"
+            [deckcraft]="https://github.com/storytold/deckcraft"
+            [vectorcraft]="https://github.com/storytold/vectorcraft"
+            [photocraft]="https://github.com/storytold/photocraft"
+            [effectcraft]="https://github.com/storytold/effectcraft"
+            [soundcraft]="https://github.com/storytold/soundcraft"
+            [designcraft]="https://github.com/storytold/designcraft"
+            [filmcraft]="https://github.com/storytold/filmcraft"
+            [lossless-cut]="https://github.com/mifi/lossless-cut"
+            [cap]="https://github.com/CapSoftware/Cap"
+            [strix]="https://github.com/usestrix/strix"
+          )
+          for name in "${!repos[@]}"; do
+            url="${repos[$name]}"
+            dir="packages/engines/$name"
+            if [ -d "$dir" ]; then
+              echo "SKIP $name (já existe)"
+              continue
+            fi
+            echo "Cloning $name..."
+            git clone --depth 1 "$url" "$dir" || { echo "FAIL $name"; continue; }
+            rm -rf "$dir/.git"
+            git add "$dir"
+            git commit -m "vendor: $name source" || true
+          done
+
+      - name: Push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git push origin feat/vendor-real-engines
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
