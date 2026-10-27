@@ -1,3 +1,4 @@
+// BLOQUEADO: packages/engines/strix é uma aplicação Python sem entrypoint TypeScript/Node exportado.
 import { logger } from "../utils/logger.js";
 
 export interface StrixScanOptions {

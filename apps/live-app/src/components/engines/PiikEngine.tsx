@@ -1,3 +1,4 @@
+// BLOQUEADO: packages/engines/piik é uma aplicação Go/Vite sem entrypoint de biblioteca JS exportado.
 "use client";
 
 import React, { useState, useRef } from "react";

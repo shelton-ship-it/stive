@@ -1,3 +1,4 @@
+// BLOQUEADO: packages/engines/wordcraft é uma aplicação Rust/Cargo sem entrypoint JS exportado.
 "use client";
 
 import React, { useState } from "react";

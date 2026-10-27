@@ -1,3 +1,4 @@
+// BLOQUEADO: packages/engines/lossless-cut é uma aplicação Electron sem entrypoint de biblioteca JS/browser exportado.
 "use client";
 
 import React, { useState, useRef } from "react";

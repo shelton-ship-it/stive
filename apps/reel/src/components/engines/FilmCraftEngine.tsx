@@ -1,3 +1,4 @@
+// BLOQUEADO: packages/engines/filmcraft é uma aplicação Rust/Cargo sem entrypoint JS exportado.
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";

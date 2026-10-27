@@ -1,3 +1,4 @@
+// BLOQUEADO: packages/engines/effectcraft é uma aplicação Rust/Cargo sem entrypoint JS exportado.
 "use client";
 
 import React, { useState, useRef, useEffect, useCallback } from "react";

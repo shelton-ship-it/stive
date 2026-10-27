@@ -1,3 +1,4 @@
+// BLOQUEADO: packages/engines/cap é uma aplicação Rust/Tauri/Bun monorepo sem entrypoint de biblioteca JS exportado.
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";

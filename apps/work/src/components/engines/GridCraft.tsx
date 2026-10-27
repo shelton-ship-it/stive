@@ -1,3 +1,4 @@
+// BLOQUEADO: packages/engines/gridcraft é uma aplicação Rust/Cargo sem entrypoint JS exportado.
 "use client";
 
 import React, { useState, useMemo } from "react";

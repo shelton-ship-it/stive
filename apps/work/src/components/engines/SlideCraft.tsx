@@ -1,3 +1,4 @@
+// BLOQUEADO: packages/engines/deckcraft é uma aplicação Rust/Cargo sem entrypoint JS exportado.
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";

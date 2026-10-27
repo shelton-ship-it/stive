@@ -1,3 +1,4 @@
+// BLOQUEADO: packages/engines/excalidraw é um monorepo sem pacote JS compilado em dist/ nem entrypoint JS exportado na raiz.
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";

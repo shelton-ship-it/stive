@@ -1,3 +1,4 @@
+// BLOQUEADO: packages/engines/filee é uma aplicação C#/.NET sem entrypoint JS exportado.
 "use client";
 
 import React, { useState } from "react";
