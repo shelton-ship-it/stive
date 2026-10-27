@@ -9,8 +9,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: feat/vendor-real-engines
+          ref: main
           token: ${{ secrets.GH_PAT }}
+
+      - name: Create vendor branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -B feat/vendor-real-engines
+          git push origin feat/vendor-real-engines
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
 
       - name: Clone and vendor all engines
         run: |
@@ -50,8 +59,6 @@ jobs:
 
       - name: Push
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
           git push origin feat/vendor-real-engines
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
