@@ -8,13 +8,13 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@stive/ui": "workspace:*",
+    "@stive/ads": "workspace:*",
+    "@stive/analytics": "workspace:*",
     "@stive/auth": "workspace:*",
     "@stive/billing": "workspace:*",
     "@stive/i18n": "workspace:*",
     "@stive/quotas": "workspace:*",
-    "@stive/ads": "workspace:*",
-    "@stive/analytics": "workspace:*",
+    "@stive/ui": "workspace:*",
     "next": "^15.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
