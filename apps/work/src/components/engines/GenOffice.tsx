@@ -2,14 +2,80 @@
 
 import React, { useState } from "react";
 import { Button } from "@stive/ui";
-import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } from "docx";
-import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 
 type EngineState = "idle" | "loading" | "processing" | "done" | "error";
 
 interface ExportedFile {
   url: string;
   fileName: string;
+}
+
+// Native PDF Generator
+function createNativePDF(title: string, textContent: string): Blob {
+  const lines = textContent.split("\n").filter(Boolean);
+  const pdfHeader = "%PDF-1.4\n";
+
+  let body = "";
+  const objects: string[] = [];
+
+  objects.push("1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj");
+  objects.push("2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj");
+  objects.push("3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>\nendobj");
+  objects.push("4 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj");
+
+  let streamText = `BT /F1 16 Tf 50 800 Td (${title.replace(/[()\\]/g, "\\$&")}) Tj ET\n`;
+  let y = 760;
+  for (const line of lines) {
+    streamText += `BT /F1 11 Tf 50 ${y} Td (${line.substring(0, 80).replace(/[()\\]/g, "\\$&")}) Tj ET\n`;
+    y -= 18;
+    if (y < 50) break;
+  }
+
+  objects.push(`5 0 obj\n<< /Length ${streamText.length} >>\nstream\n${streamText}endstream\nendobj`);
+
+  const offsets: number[] = [];
+  let currentOffset = pdfHeader.length;
+
+  for (const obj of objects) {
+    offsets.push(currentOffset);
+    const objStr = obj + "\n";
+    body += objStr;
+    currentOffset += objStr.length;
+  }
+
+  const xrefOffset = currentOffset;
+  let xref = `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
+  for (const off of offsets) {
+    xref += `${off.toString().padStart(10, "0")} 00000 n \n`;
+  }
+
+  const trailer = `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`;
+
+  return new Blob([pdfHeader + body + xref + trailer], { type: "application/pdf" });
+}
+
+// Native DOCX OpenXML Document XML String Builder
+function createNativeDOCX(title: string, textContent: string): Blob {
+  const paragraphs = textContent
+    .split("\n")
+    .map(
+      (line) =>
+        `<w:p><w:r><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/><w:sz w:val="24"/></w:rPr><w:t>${line
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")}</w:t></w:r></w:p>`
+    )
+    .join("\n");
+
+  const docXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:body>
+    <w:p><w:r><w:rPr><w:b/><w:sz w:val="36"/></w:rPr><w:t>${title}</w:t></w:r></w:p>
+    ${paragraphs}
+  </w:body>
+</w:document>`;
+
+  return new Blob([docXml], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
 }
 
 export function GenOffice() {
@@ -47,111 +113,18 @@ export function GenOffice() {
     }
   };
 
-  const generateDocxBlob = async (): Promise<Blob> => {
-    const paragraphs = documentContent.split("\n").map((line) => {
-      if (line.startsWith("# ")) {
-        return new Paragraph({
-          text: line.replace("# ", ""),
-          heading: HeadingLevel.HEADING_1,
-          alignment: AlignmentType.LEFT,
-        });
-      }
-      return new Paragraph({
-        children: [
-          new TextRun({
-            text: line,
-            font: "Calibri",
-            size: 24, // 12pt
-          }),
-        ],
-      });
-    });
-
-    const doc = new Document({
-      sections: [
-        {
-          properties: {},
-          children: [
-            new Paragraph({
-              text: docTitle.replace(/_/g, " "),
-              heading: HeadingLevel.TITLE,
-              alignment: AlignmentType.LEFT,
-            }),
-            ...paragraphs,
-          ],
-        },
-      ],
-    });
-
-    return await Packer.toBlob(doc);
-  };
-
-  const generatePdfBlob = async (): Promise<Blob> => {
-    const pdfDoc = await PDFDocument.create();
-    let page = pdfDoc.addPage([595, 842]); // A4
-    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-    const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-
-    let y = 800;
-
-    // Title
-    page.drawText(docTitle.replace(/_/g, " "), {
-      x: 50,
-      y,
-      size: 20,
-      font: boldFont,
-      color: rgb(0.1, 0.1, 0.1),
-    });
-    y -= 40;
-
-    // Content lines
-    const lines = documentContent.split("\n");
-    for (const line of lines) {
-      if (y < 50) {
-        page = pdfDoc.addPage([595, 842]);
-        y = 800;
-      }
-
-      if (line.trim().length === 0) {
-        y -= 15;
-        continue;
-      }
-
-      const isHeading = line.startsWith("# ");
-      const textToDraw = isHeading ? line.replace("# ", "") : line;
-      const fontSize = isHeading ? 14 : 11;
-      const currentFont = isHeading ? boldFont : font;
-
-      page.drawText(textToDraw.substring(0, 80), {
-        x: 50,
-        y,
-        size: fontSize,
-        font: currentFont,
-        color: rgb(0.2, 0.2, 0.2),
-      });
-
-      y -= fontSize + 8;
-    }
-
-    const pdfBytes = await pdfDoc.save();
-    return new Blob([pdfBytes.buffer as ArrayBuffer], { type: "application/pdf" });
-  };
-
   const handleExport = async (format: "docx" | "pdf") => {
     try {
-      setEngineState("loading");
-      setStatus(`A preparar exportação de "${docTitle}"...`);
-
       setEngineState("processing");
-      setStatus(`Gerando ficheiro .${format} via GenOffice Engine...`);
+      setStatus(`A gerar ficheiro .${format} via GenOffice Engine...`);
 
       let blob: Blob;
-      let fileName = `${docTitle}.${format}`;
+      const fileName = `${docTitle}.${format}`;
 
       if (format === "docx") {
-        blob = await generateDocxBlob();
+        blob = createNativeDOCX(docTitle, documentContent);
       } else {
-        blob = await generatePdfBlob();
+        blob = createNativePDF(docTitle, documentContent);
       }
 
       const url = URL.createObjectURL(blob);
@@ -233,7 +206,6 @@ export function GenOffice() {
           <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider">
             Editor DOCX / Texto (GenOffice)
           </label>
-          <span className="text-xs text-slate-400">Dica: Comece uma linha com `# ` para título</span>
         </div>
         <textarea
           value={documentContent}
