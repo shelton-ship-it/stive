@@ -14,6 +14,7 @@ interface ExportedFile {
 export function FilmCraftEngine() {
   useEffect(() => {
     let isMounted = true;
+    // @ts-ignore Engine vendored module
     import("@stive/engine-filmcraft")
       .then(() => {
         if (!isMounted) return;

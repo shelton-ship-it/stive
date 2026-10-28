@@ -16,6 +16,7 @@ export function CapEngine() {
     setEngineState("loading");
     setStatus("Carregando Cap Engine...");
 
+    // @ts-ignore Engine vendored module
     import("@stive/engine-cap")
       .then(() => {
         if (!isMounted) return;

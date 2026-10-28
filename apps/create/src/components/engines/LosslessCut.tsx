@@ -16,6 +16,7 @@ export function LosslessCut() {
     setEngineState("loading");
     setStatus("Carregando LosslessCut Engine...");
 
+    // @ts-ignore Engine vendored module
     import("@stive/engine-lossless-cut")
       .then(() => {
         if (!isMounted) return;

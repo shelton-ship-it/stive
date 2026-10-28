@@ -15,6 +15,7 @@ export function LightCraft() {
     setEngineState("loading");
     setStatus("Carregando LightCraft WASM Engine...");
 
+    // @ts-ignore Engine vendored module
     import("@stive/engine-lightcraft")
       .then(() => {
         if (!isMounted) return;

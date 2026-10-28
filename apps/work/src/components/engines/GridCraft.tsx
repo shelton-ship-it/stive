@@ -15,6 +15,7 @@ interface ExportedFile {
 export function GridCraft() {
   useEffect(() => {
     let isMounted = true;
+    // @ts-ignore Engine vendored module
     import("@stive/engine-gridcraft")
       .then(() => {
         if (!isMounted) return;

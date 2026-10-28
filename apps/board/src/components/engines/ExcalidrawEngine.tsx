@@ -30,6 +30,7 @@ export function ExcalidrawEngine() {
     setEngineState("loading");
     setStatus("Carregando Excalidraw Engine...");
 
+    // @ts-ignore Engine vendored module
     import("@stive/engine-excalidraw")
       .then(() => {
         if (!isMounted) return;

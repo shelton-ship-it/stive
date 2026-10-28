@@ -82,6 +82,7 @@ function createNativeDOCX(title: string, textContent: string): Blob {
 export function GenOffice() {
   useEffect(() => {
     let isMounted = true;
+    // @ts-ignore Engine vendored module
     import("@stive/engine-wordcraft")
       .then(() => {
         if (!isMounted) return;

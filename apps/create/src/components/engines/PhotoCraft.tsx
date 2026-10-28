@@ -14,6 +14,7 @@ interface ExportedFile {
 export function PhotoCraft() {
   useEffect(() => {
     let isMounted = true;
+    // @ts-ignore Engine vendored module
     import("@stive/engine-photocraft")
       .then(() => {
         if (!isMounted) return;

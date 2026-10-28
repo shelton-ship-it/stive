@@ -27,6 +27,7 @@ interface ExportedFile {
 export function VectorCraft() {
   useEffect(() => {
     let isMounted = true;
+    // @ts-ignore Engine vendored module
     import("@stive/engine-vectorcraft")
       .then(() => {
         if (!isMounted) return;

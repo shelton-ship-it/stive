@@ -22,6 +22,7 @@ interface ExportedFile {
 export function SlideCraft() {
   useEffect(() => {
     let isMounted = true;
+    // @ts-ignore Engine vendored module
     import("@stive/engine-deckcraft")
       .then(() => {
         if (!isMounted) return;

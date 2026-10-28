@@ -14,6 +14,7 @@ interface ExportedFile {
 export function SoundCraft() {
   useEffect(() => {
     let isMounted = true;
+    // @ts-ignore Engine vendored module
     import("@stive/engine-soundcraft")
       .then(() => {
         if (!isMounted) return;

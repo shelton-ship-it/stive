@@ -11,6 +11,7 @@ export function PiikEngine() {
     setEngineState("loading");
     setStatus("Carregando Piik Engine...");
 
+    // @ts-ignore Engine vendored module
     import("@stive/engine-piik")
       .then(() => {
         if (!isMounted) return;

@@ -23,6 +23,7 @@ interface ExportedFile {
 export function DesignCraft() {
   useEffect(() => {
     let isMounted = true;
+    // @ts-ignore Engine vendored module
     import("@stive/engine-designcraft")
       .then(() => {
         if (!isMounted) return;

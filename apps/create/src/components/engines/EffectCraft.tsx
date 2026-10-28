@@ -14,6 +14,7 @@ interface ExportedFile {
 export function EffectCraft({ is3D = false }: { is3D?: boolean }) {
   useEffect(() => {
     let isMounted = true;
+    // @ts-ignore Engine vendored module
     import("@stive/engine-effectcraft")
       .then(() => {
         if (!isMounted) return;

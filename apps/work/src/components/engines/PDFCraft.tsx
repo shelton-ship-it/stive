@@ -69,6 +69,7 @@ function createNativePDF(pagesText: string[]): Blob {
 export function PDFCraft() {
   useEffect(() => {
     let isMounted = true;
+    // @ts-ignore Engine vendored module
     import("@stive/engine-pdfcraft")
       .then(() => {
         if (!isMounted) return;
