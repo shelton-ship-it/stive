@@ -3,13 +3,13 @@ import type { Metadata } from "next";
 import { Sidebar } from "@/components/Sidebar";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { CrossLinks } from "@/components/CrossLinks";
-import { PDFCraft } from "@/components/engines/PDFCraft";
+import { StivePdfEngine } from "@/components/engines/StivePdfEngine";
 import { AdSlot } from "@stive/ads";
 
 export const metadata: Metadata = {
-  title: "Stive Docs — Edit PDF Online",
-  description: "Ferramentas profissionais para juntar, dividir, comprimir e assinar PDFs online com o PDFCraft Engine.",
-  keywords: ["edit pdf online", "stive docs", "juntar pdf", "dividir pdf", "comprimir pdf", "assinar pdf"],
+  title: "Stive Docs — Stive PDF Engine",
+  description: "Ferramentas profissionais para juntar, dividir, comprimir e assinar PDFs online com o motor Stive PDF.",
+  keywords: ["edit pdf online", "stive docs", "stive pdf", "juntar pdf", "dividir pdf", "comprimir pdf", "assinar pdf"],
 };
 
 export default function WorkDocsPage() {
@@ -19,7 +19,7 @@ export default function WorkDocsPage() {
     "name": "Stive Docs",
     "applicationCategory": "BusinessApplication",
     "operatingSystem": "All",
-    "description": "Edit PDF online with Stive Docs and PDFCraft engine.",
+    "description": "Edit PDF online with Stive Docs and Stive PDF engine.",
     "keywords": "edit pdf online",
   };
 
@@ -51,7 +51,7 @@ export default function WorkDocsPage() {
         <AdSlot plan="free" />
 
         <div className="my-6">
-          <PDFCraft />
+          <StivePdfEngine />
         </div>
 
         <CrossLinks links={crossLinks} />

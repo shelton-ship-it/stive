@@ -42,10 +42,10 @@ export default function WorkSettingsPage() {
           <hr className="border-slate-100" />
 
           <div>
-            <h3 className="text-base font-semibold text-slate-800 mb-1">Motores de Processamento (Forks Privados)</h3>
+            <h3 className="text-base font-semibold text-slate-800 mb-1">Motores de Processamento</h3>
             <p className="text-xs text-slate-500 mb-3">Motores ativos na sua conta Stive Work:</p>
             <ul className="space-y-2 text-sm text-slate-700 font-mono bg-slate-50 p-4 rounded-lg border border-slate-200">
-              <li>• PDFCraft (PDF Engine Fork) — Ativo</li>
+              <li>• Stive PDF (PDF Engine) — Ativo</li>
               <li>• GenOffice (DOCX Engine Fork) — Ativo</li>
               <li>• GridCraft (XLSX Engine Fork) — Ativo</li>
               <li>• SlideCraft (PPTX Engine Fork) — Ativo</li>
