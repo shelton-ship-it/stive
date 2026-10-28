@@ -1,0 +1,6 @@
+{
+  "name": "@stive/engine-lightcraft",
+  "exports": {
+    ".": "./pkg/index.js"
+  }
+}

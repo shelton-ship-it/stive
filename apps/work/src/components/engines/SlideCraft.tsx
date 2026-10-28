@@ -1,3 +1,4 @@
+// AGUARDA BUILD WASM: correr wasm-pack build --target web --release para gerar pkg/
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
@@ -19,6 +20,25 @@ interface ExportedFile {
 }
 
 export function SlideCraft() {
+  useEffect(() => {
+    let isMounted = true;
+    // @ts-ignore Engine vendored module
+    import("@stive/engine-deckcraft")
+      .then(() => {
+        if (!isMounted) return;
+        setStatus("DeckCraft WASM Engine pronto.");
+      })
+      .catch((err) => {
+        if (!isMounted) return;
+        setEngineState("error");
+        setStatus(`AGUARDA BUILD WASM: correr wasm-pack build --target web --release para gerar pkg/ (${err instanceof Error ? err.message : String(err)})`);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const [slides, setSlides] = useState<Slide[]>([
     { id: "1", title: "Apresentação Stive Work", subtitle: "A Suite de Produtividade Moderna", themeColor: "#1e40af", layout: "title" },
     { id: "2", title: "Funcionalidades Principais", subtitle: "Docs, Write, Sheets e Deck integrados e colaborativos.", themeColor: "#0f766e", layout: "content" },

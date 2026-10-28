@@ -11,6 +11,29 @@ interface ExportedFile {
 }
 
 export function CapEngine() {
+  React.useEffect(() => {
+    let isMounted = true;
+    setEngineState("loading");
+    setStatus("Carregando Cap Engine...");
+
+    // @ts-ignore Engine vendored module
+    import("@stive/engine-cap")
+      .then(() => {
+        if (!isMounted) return;
+        setEngineState("done");
+        setStatus("Cap Screen Recorder Engine pronto.");
+      })
+      .catch((err) => {
+        if (!isMounted) return;
+        setEngineState("error");
+        setStatus(`Erro ao carregar Cap Engine: ${err instanceof Error ? err.message : String(err)}`);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const [recordMic, setRecordMic] = useState<boolean>(false);

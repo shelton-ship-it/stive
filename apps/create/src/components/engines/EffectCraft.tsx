@@ -1,3 +1,4 @@
+// AGUARDA BUILD WASM: correr wasm-pack build --target web --release para gerar pkg/
 "use client";
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
@@ -11,6 +12,25 @@ interface ExportedFile {
 }
 
 export function EffectCraft({ is3D = false }: { is3D?: boolean }) {
+  useEffect(() => {
+    let isMounted = true;
+    // @ts-ignore Engine vendored module
+    import("@stive/engine-effectcraft")
+      .then(() => {
+        if (!isMounted) return;
+        setStatus(is3D ? "EffectCraft 3D WASM Engine pronto." : "EffectCraft Motion WASM Engine pronto.");
+      })
+      .catch((err) => {
+        if (!isMounted) return;
+        setEngineState("error");
+        setStatus(`AGUARDA BUILD WASM: correr wasm-pack build --target web --release para gerar pkg/ (${err instanceof Error ? err.message : String(err)})`);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [is3D]);
+
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [speed, setSpeed] = useState<number>(1);
   const [shapeColor, setShapeColor] = useState<string>("#8b5cf6");

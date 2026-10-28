@@ -26,6 +26,23 @@ export function ExcalidrawEngine() {
   const tempSnapshotRef = useRef<ImageData | null>(null);
 
   useEffect(() => {
+    let isMounted = true;
+    setEngineState("loading");
+    setStatus("Carregando Excalidraw Engine...");
+
+    // @ts-ignore Engine vendored module
+    import("@stive/engine-excalidraw")
+      .then(() => {
+        if (!isMounted) return;
+        setEngineState("done");
+        setStatus("Excalidraw Engine carregado com sucesso.");
+      })
+      .catch((err) => {
+        if (!isMounted) return;
+        setEngineState("error");
+        setStatus(`Erro ao carregar Excalidraw Engine: ${err instanceof Error ? err.message : String(err)}`);
+      });
+
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -35,6 +52,10 @@ export function ExcalidrawEngine() {
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     saveHistoryState();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const saveHistoryState = () => {

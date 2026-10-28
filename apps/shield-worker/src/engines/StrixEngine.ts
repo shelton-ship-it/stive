@@ -1,3 +1,4 @@
+// AGUARDA BUILD WASM: carregar via Pyodide (CPython WASM) — script CDN ou vendored
 import { logger } from "../utils/logger.js";
 
 export interface StrixScanOptions {
@@ -50,6 +51,13 @@ export class StrixEngine {
   }
 
   public async runScan(): Promise<StrixScanResult> {
+    try {
+      // @ts-ignore Engine vendored module
+      await import("@stive/engine-strix");
+    } catch {
+      logger.info("StrixEngine: AGUARDA BUILD WASM (Pyodide / CPython WASM)");
+    }
+
     const startTime = Date.now();
     logger.info("StrixEngine: starting security analysis on target", {
       target: this.options.target,

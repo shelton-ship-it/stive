@@ -6,6 +6,29 @@ import { Button } from "@stive/ui";
 type EngineState = "idle" | "loading" | "processing" | "done" | "error";
 
 export function PiikEngine() {
+  React.useEffect(() => {
+    let isMounted = true;
+    setEngineState("loading");
+    setStatus("Carregando Piik Engine...");
+
+    // @ts-ignore Engine vendored module
+    import("@stive/engine-piik")
+      .then(() => {
+        if (!isMounted) return;
+        setEngineState("done");
+        setStatus("Piik WebRTC Engine pronto.");
+      })
+      .catch((err) => {
+        if (!isMounted) return;
+        setEngineState("error");
+        setStatus(`Erro ao carregar Piik Engine: ${err instanceof Error ? err.message : String(err)}`);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const [isSharing, setIsSharing] = useState<boolean>(false);
   const [isAudioMuted, setIsAudioMuted] = useState<boolean>(false);
   const [engineState, setEngineState] = useState<EngineState>("idle");

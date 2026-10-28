@@ -1,4 +1,8 @@
 {
+	"name": "@stive/engine-cap",
+	"exports": {
+		".": "./packages/sdk-embed/src/index.ts"
+	},
 	"type": "module",
 	"scripts": {
 		"build": "dotenv -e .env -- turbo run build",

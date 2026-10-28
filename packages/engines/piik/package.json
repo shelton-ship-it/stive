@@ -1,5 +1,8 @@
 {
-  "name": "piik",
+  "name": "@stive/engine-piik",
+  "exports": {
+    ".": "./src/client/App.tsx"
+  },
   "license": "MIT",
   "private": true,
   "type": "module",

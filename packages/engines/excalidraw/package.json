@@ -1,6 +1,9 @@
 {
   "private": true,
-  "name": "excalidraw-monorepo",
+  "name": "@stive/engine-excalidraw",
+  "exports": {
+    ".": "./packages/excalidraw/index.tsx"
+  },
   "packageManager": "yarn@1.22.22",
   "workspaces": [
     "excalidraw-app",

@@ -1,0 +1,6 @@
+{
+  "name": "@stive/engine-wordcraft",
+  "exports": {
+    ".": "./pkg/index.js"
+  }
+}

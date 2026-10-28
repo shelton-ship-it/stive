@@ -1,6 +1,7 @@
+// AGUARDA BUILD WASM: correr wasm-pack build --target web --release para gerar pkg/
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@stive/ui";
 
 type EngineState = "idle" | "loading" | "processing" | "done" | "error";
@@ -79,6 +80,25 @@ function createNativeDOCX(title: string, textContent: string): Blob {
 }
 
 export function GenOffice() {
+  useEffect(() => {
+    let isMounted = true;
+    // @ts-ignore Engine vendored module
+    import("@stive/engine-wordcraft")
+      .then(() => {
+        if (!isMounted) return;
+        setStatus("WordCraft WASM Engine pronto.");
+      })
+      .catch((err) => {
+        if (!isMounted) return;
+        setEngineState("error");
+        setStatus(`AGUARDA BUILD WASM: correr wasm-pack build --target web --release para gerar pkg/ (${err instanceof Error ? err.message : String(err)})`);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const [documentContent, setDocumentContent] = useState<string>(
     "Bem-vindo ao Stive Write.\nEste é um documento de demonstração do GenOffice Engine.\n\nPode editar e formatar o seu texto diretamente no navegador e exportá-lo como DOCX ou PDF."
   );

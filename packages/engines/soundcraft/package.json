@@ -1,0 +1,6 @@
+{
+  "name": "@stive/engine-soundcraft",
+  "exports": {
+    ".": "./pkg/index.js"
+  }
+}

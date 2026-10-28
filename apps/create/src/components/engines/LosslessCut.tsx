@@ -11,6 +11,29 @@ interface ExportedFile {
 }
 
 export function LosslessCut() {
+  React.useEffect(() => {
+    let isMounted = true;
+    setEngineState("loading");
+    setStatus("Carregando LosslessCut Engine...");
+
+    // @ts-ignore Engine vendored module
+    import("@stive/engine-lossless-cut")
+      .then(() => {
+        if (!isMounted) return;
+        setEngineState("done");
+        setStatus("LosslessCut Engine pronto.");
+      })
+      .catch((err) => {
+        if (!isMounted) return;
+        setEngineState("error");
+        setStatus(`Erro ao carregar LosslessCut Engine: ${err instanceof Error ? err.message : String(err)}`);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [mediaLoaded, setMediaLoaded] = useState<boolean>(false);
   const [isAudio, setIsAudio] = useState<boolean>(false);

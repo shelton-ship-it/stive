@@ -1,6 +1,7 @@
+// AGUARDA BUILD WASM: correr wasm-pack build --target web --release para gerar pkg/
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@stive/ui";
 
 type EngineState = "idle" | "loading" | "processing" | "done" | "error";
@@ -66,6 +67,25 @@ function createNativePDF(pagesText: string[]): Blob {
 }
 
 export function PDFCraft() {
+  useEffect(() => {
+    let isMounted = true;
+    // @ts-ignore Engine vendored module
+    import("@stive/engine-pdfcraft")
+      .then(() => {
+        if (!isMounted) return;
+        setStatus("PDFCraft WASM Engine pronto.");
+      })
+      .catch((err) => {
+        if (!isMounted) return;
+        setEngineState("error");
+        setStatus(`AGUARDA BUILD WASM: correr wasm-pack build --target web --release para gerar pkg/ (${err instanceof Error ? err.message : String(err)})`);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const [activeTab, setActiveTab] = useState<"merge" | "split" | "compress" | "sign">("merge");
   const [files, setFiles] = useState<File[]>([]);
   const [engineState, setEngineState] = useState<EngineState>("idle");

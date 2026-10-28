@@ -1,0 +1,6 @@
+{
+  "name": "@stive/engine-filmcraft",
+  "exports": {
+    ".": "./pkg/index.js"
+  }
+}

@@ -1,6 +1,7 @@
+// AGUARDA BUILD WASM: correr wasm-pack build --target web --release para gerar pkg/
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@stive/ui";
 
 interface LayoutElement {
@@ -20,6 +21,25 @@ interface ExportedFile {
 }
 
 export function DesignCraft() {
+  useEffect(() => {
+    let isMounted = true;
+    // @ts-ignore Engine vendored module
+    import("@stive/engine-designcraft")
+      .then(() => {
+        if (!isMounted) return;
+        setStatus("DesignCraft WASM Engine pronto.");
+      })
+      .catch((err) => {
+        if (!isMounted) return;
+        setEngineState("error");
+        setStatus(`AGUARDA BUILD WASM: correr wasm-pack build --target web --release para gerar pkg/ (${err instanceof Error ? err.message : String(err)})`);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const [preset, setPreset] = useState<"flyer" | "poster" | "brochure">("flyer");
   const [elements, setElements] = useState<LayoutElement[]>([
     { id: "1", type: "banner", text: "NOVO LANÇAMENTO", bgColor: "#4c1d95", textColor: "#ffffff" },
