@@ -1,7 +1,7 @@
-// BLOQUEADO: Filee é um projecto C#/.NET (.slnx) sem entrypoint JS/TS exportável
+// AGUARDA BUILD WASM: compilar com .NET NativeAOT/Blazor para gerar WASM + loader JS
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@stive/ui";
 
 type EngineState = "idle" | "loading" | "processing" | "done" | "error";
@@ -13,6 +13,29 @@ interface ConvertedResult {
 }
 
 export function FileeEngine() {
+  useEffect(() => {
+    let isMounted = true;
+    setEngineState("loading");
+    setStatusMessage("Carregando Filee WASM Engine...");
+
+    // @ts-ignore Engine vendored module
+    import("@stive/engine-filee")
+      .then(() => {
+        if (!isMounted) return;
+        setEngineState("done");
+        setStatusMessage("Filee WASM Engine pronto.");
+      })
+      .catch((err) => {
+        if (!isMounted) return;
+        setEngineState("error");
+        setStatusMessage(`AGUARDA BUILD WASM: compilar com .NET NativeAOT/Blazor para gerar WASM + loader JS (${err instanceof Error ? err.message : String(err)})`);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [targetFormat, setTargetFormat] = useState<string>("PNG");
   const [engineState, setEngineState] = useState<EngineState>("idle");

@@ -1,0 +1,6 @@
+{
+  "name": "@stive/engine-filee",
+  "exports": {
+    ".": "./dist/index.js"
+  }
+}
