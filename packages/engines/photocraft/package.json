@@ -1,0 +1,6 @@
+{
+  "name": "@stive/engine-photocraft",
+  "exports": {
+    ".": "./pkg/index.js"
+  }
+}

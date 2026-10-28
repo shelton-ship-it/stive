@@ -1,6 +1,7 @@
+// AGUARDA BUILD WASM: correr wasm-pack build --target web --release para gerar pkg/
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@stive/ui";
 
 type EngineState = "idle" | "loading" | "processing" | "done" | "error";
@@ -11,6 +12,24 @@ interface ExportedFile {
 }
 
 export function PhotoCraftEngine() {
+  useEffect(() => {
+    let isMounted = true;
+    import("@stive/engine-photocraft")
+      .then(() => {
+        if (!isMounted) return;
+        setStatus("PhotoCraft WASM Engine pronto (Stive Pix).");
+      })
+      .catch((err) => {
+        if (!isMounted) return;
+        setEngineState("error");
+        setStatus(`AGUARDA BUILD WASM: correr wasm-pack build --target web --release para gerar pkg/ (${err instanceof Error ? err.message : String(err)})`);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imageLoaded, setImageLoaded] = useState<boolean>(false);
   const [rotation, setRotation] = useState<number>(0);

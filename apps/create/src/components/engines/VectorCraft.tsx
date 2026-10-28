@@ -1,6 +1,7 @@
+// AGUARDA BUILD WASM: correr wasm-pack build --target web --release para gerar pkg/
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Button } from "@stive/ui";
 
 export interface VectorShape {
@@ -24,6 +25,24 @@ interface ExportedFile {
 }
 
 export function VectorCraft() {
+  useEffect(() => {
+    let isMounted = true;
+    import("@stive/engine-vectorcraft")
+      .then(() => {
+        if (!isMounted) return;
+        setStatus("VectorCraft WASM Engine pronto.");
+      })
+      .catch((err) => {
+        if (!isMounted) return;
+        setEngineState("error");
+        setStatus(`AGUARDA BUILD WASM: correr wasm-pack build --target web --release para gerar pkg/ (${err instanceof Error ? err.message : String(err)})`);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const [shapes, setShapes] = useState<VectorShape[]>([
     { id: "1", type: "rect", x: 40, y: 40, width: 120, height: 80, fill: "#8b5cf6", stroke: "#7c3aed", strokeWidth: 2 },
     { id: "2", type: "circle", x: 220, y: 80, width: 90, height: 90, fill: "#ec4899", stroke: "#db2777", strokeWidth: 2 },

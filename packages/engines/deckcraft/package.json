@@ -1,0 +1,6 @@
+{
+  "name": "@stive/engine-deckcraft",
+  "exports": {
+    ".": "./pkg/index.js"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "@stive/engine-effectcraft",
+  "exports": {
+    ".": "./pkg/index.js"
+  }
+}

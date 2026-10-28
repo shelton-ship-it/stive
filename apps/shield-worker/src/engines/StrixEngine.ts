@@ -1,3 +1,4 @@
+// BLOQUEADO: Strix é um engine Python (pyproject.toml) sem entrypoint JS/TS exportável
 import { logger } from "../utils/logger.js";
 
 export interface StrixScanOptions {

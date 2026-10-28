@@ -1,0 +1,6 @@
+{
+  "name": "@stive/engine-vectorcraft",
+  "exports": {
+    ".": "./pkg/index.js"
+  }
+}

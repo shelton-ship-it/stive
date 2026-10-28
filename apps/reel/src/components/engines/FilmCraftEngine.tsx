@@ -1,3 +1,4 @@
+// AGUARDA BUILD WASM: correr wasm-pack build --target web --release para gerar pkg/
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
@@ -11,6 +12,24 @@ interface ExportedFile {
 }
 
 export function FilmCraftEngine() {
+  useEffect(() => {
+    let isMounted = true;
+    import("@stive/engine-filmcraft")
+      .then(() => {
+        if (!isMounted) return;
+        setStatus("FilmCraft WASM Engine pronto (Stive Reel).");
+      })
+      .catch((err) => {
+        if (!isMounted) return;
+        setEngineState("error");
+        setStatus(`AGUARDA BUILD WASM: correr wasm-pack build --target web --release para gerar pkg/ (${err instanceof Error ? err.message : String(err)})`);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [videoLoaded, setVideoLoaded] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);

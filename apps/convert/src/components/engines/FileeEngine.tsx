@@ -1,3 +1,4 @@
+// BLOQUEADO: Filee é um projecto C#/.NET (.slnx) sem entrypoint JS/TS exportável
 "use client";
 
 import React, { useState } from "react";

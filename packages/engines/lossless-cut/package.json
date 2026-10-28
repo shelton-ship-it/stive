@@ -1,5 +1,8 @@
 {
-  "name": "lossless-cut",
+  "name": "@stive/engine-lossless-cut",
+  "exports": {
+    ".": "./src/renderer/src/App.tsx"
+  },
   "productName": "LosslessCut",
   "desktopName": "losslesscut.desktop",
   "description": "The swiss army knife of lossless video/audio editing",

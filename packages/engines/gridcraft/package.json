@@ -1,0 +1,6 @@
+{
+  "name": "@stive/engine-gridcraft",
+  "exports": {
+    ".": "./pkg/index.js"
+  }
+}

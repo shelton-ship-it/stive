@@ -1,6 +1,7 @@
+// AGUARDA BUILD WASM: correr wasm-pack build --target web --release para gerar pkg/
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Button } from "@stive/ui";
 
 type CellData = { [key: string]: string };
@@ -12,6 +13,24 @@ interface ExportedFile {
 }
 
 export function GridCraft() {
+  useEffect(() => {
+    let isMounted = true;
+    import("@stive/engine-gridcraft")
+      .then(() => {
+        if (!isMounted) return;
+        setStatus("GridCraft WASM Engine pronto.");
+      })
+      .catch((err) => {
+        if (!isMounted) return;
+        setEngineState("error");
+        setStatus(`AGUARDA BUILD WASM: correr wasm-pack build --target web --release para gerar pkg/ (${err instanceof Error ? err.message : String(err)})`);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const columns = ["A", "B", "C", "D", "E", "F", "G", "H"];
   const rows = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 

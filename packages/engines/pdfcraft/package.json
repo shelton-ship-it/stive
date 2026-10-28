@@ -1,0 +1,6 @@
+{
+  "name": "@stive/engine-pdfcraft",
+  "exports": {
+    ".": "./pkg/index.js"
+  }
+}
