@@ -1,11 +1,15 @@
 /**
  * Stive PDF Engine — WebAssembly TypeScript API definitions
+ * Universal Headless Session with 90+ tools across 6 categories
  */
+
 export interface ToolItem {
   name: string;
   title: string;
   category: string;
   description: string;
+  read_only: boolean;
+  destructive: boolean;
 }
 
 export class StivePdfSession {
