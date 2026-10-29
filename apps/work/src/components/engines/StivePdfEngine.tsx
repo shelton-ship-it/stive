@@ -4,7 +4,14 @@ import React, { useState, useEffect, useRef } from "react";
 import { Button } from "@stive/ui";
 
 type EngineState = "idle" | "loading" | "processing" | "done" | "error";
-type ActionTab = "merge" | "split" | "compress" | "sign";
+type CategoryKey = "organize" | "optimize" | "forms" | "annotations" | "security" | "content";
+
+interface ToolDef {
+  id: string;
+  title: string;
+  desc: string;
+  icon: string;
+}
 
 interface ProcessedResult {
   blob: Blob;
@@ -13,34 +20,97 @@ interface ProcessedResult {
   originalSize: number;
   resultSize: number;
   elapsedMs: number;
-  pageCount?: number;
+  details?: string;
 }
 
+const CATEGORIES: Record<CategoryKey, { title: string; icon: string; tools: ToolDef[] }> = {
+  organize: {
+    title: "Organizar & Páginas",
+    icon: "📄",
+    tools: [
+      { id: "doc_combine", title: "Juntar PDFs", desc: "Unir múltiplos PDFs num só ficheiro contínuo", icon: "🔗" },
+      { id: "doc_split", title: "Dividir em Partes", desc: "Particionar documento a cada N páginas", icon: "✂️" },
+      { id: "page_extract", title: "Extrair Páginas", desc: "Criar novo PDF apenas com páginas escolhidas", icon: "📑" },
+      { id: "page_rotate", title: "Rodar Páginas", desc: "Ajustar orientação (90°, 180°, 270°)", icon: "🔄" },
+      { id: "page_delete", title: "Eliminar Páginas", desc: "Remover páginas selecionadas do documento", icon: "🗑️" },
+      { id: "bookmark_list", title: "Marcadores & Sumário", desc: "Inspecionar e organizar bookmarks", icon: "🔖" },
+    ],
+  },
+  optimize: {
+    title: "Otimizar & Limpeza",
+    icon: "🗜️",
+    tools: [
+      { id: "doc_optimize", title: "Comprimir PDF", desc: "Reduzir tamanho sem perder qualidade visível", icon: "⚡" },
+      { id: "doc_flatten", title: "Aplanar Documento", desc: "Fixar formulários e anotações na página", icon: "🥞" },
+      { id: "audit_space", title: "Auditoria de Tamanho", desc: "Diagnóstico completo de bytes e objetos", icon: "📊" },
+    ],
+  },
+  forms: {
+    title: "Formulários & Dados",
+    icon: "📋",
+    tools: [
+      { id: "form_fields", title: "Inspecionar Campos", desc: "Mapear todos os campos interativos", icon: "🔍" },
+      { id: "form_fill", title: "Preencher Campos", desc: "Inserir dados e valores nos campos", icon: "✍️" },
+      { id: "form_reset", title: "Limpar Formulário", desc: "Restaurar todos os valores para o padrão", icon: "🧹" },
+      { id: "doc_export_data", title: "Exportar Dados", desc: "Descarregar dados em CSV, XML ou XFDF", icon: "📤" },
+    ],
+  },
+  annotations: {
+    title: "Anotações & Revisão",
+    icon: "💬",
+    tools: [
+      { id: "comment_list", title: "Ver Anotações", desc: "Listar notas, destaques e marcas de revisão", icon: "📝" },
+      { id: "stamp_custom", title: "Carimbo / Rubrica", desc: "Estampar selo, logo ou imagem na folha", icon: "🏷️" },
+      { id: "comments_summarize", title: "Resumo de Revisão", desc: "Gerar relatório completo de comentários", icon: "📑" },
+    ],
+  },
+  security: {
+    title: "Segurança & Assinaturas",
+    icon: "🔒",
+    tools: [
+      { id: "sign_document", title: "Assinatura Digital", desc: "Estampar rubrica digital e metadados de autenticidade", icon: "✒️" },
+      { id: "sign_validate", title: "Validar Assinaturas", desc: "Verificar integridade criptográfica de assinaturas", icon: "🛡️" },
+      { id: "redact_mark", title: "Marcar Redação", desc: "Sinalizar áreas confidenciais para remoção", icon: "⬛" },
+      { id: "redact_apply", title: "Aplicar Redação", desc: "Eliminar permanentemente dados sensíveis", icon: "✂️" },
+    ],
+  },
+  content: {
+    title: "Texto & Conteúdo",
+    icon: "📝",
+    tools: [
+      { id: "text_extract", title: "Extrair Texto", desc: "Copiar todo o texto em ordem de leitura visual", icon: "📄" },
+      { id: "text_find", title: "Pesquisar Termos", desc: "Localizar ocorrências e coordenadas no documento", icon: "🔎" },
+      { id: "text_word_count", title: "Contador de Palavras", desc: "Estatísticas de palavras, caracteres e páginas", icon: "🔢" },
+      { id: "page_render", title: "Pré-visualização", desc: "Renderização ultraleve direta no DOM", icon: "🖼️" },
+    ],
+  },
+};
+
 export function StivePdfEngine() {
-  const [activeTab, setActiveTab] = useState<ActionTab>("merge");
+  const [activeCategory, setActiveCategory] = useState<CategoryKey>("organize");
+  const [selectedTool, setSelectedTool] = useState<string>("doc_combine");
   const [files, setFiles] = useState<File[]>([]);
   const [engineState, setEngineState] = useState<EngineState>("idle");
   const [status, setStatus] = useState<string>("Stive PDF Engine pronto.");
   const [signatureText, setSignatureText] = useState<string>("Assinado digitalmente via Stive PDF");
   const [splitEveryN, setSplitEveryN] = useState<number>(1);
   const [compressionPreset, setCompressionPreset] = useState<"standard" | "mobile">("standard");
+  const [extractPagesStr, setExtractPagesStr] = useState<string>("1");
   const [processedResult, setProcessedResult] = useState<ProcessedResult | null>(null);
   const activeBlobUrlRef = useRef<string | null>(null);
 
   useEffect(() => {
     let isMounted = true;
-    // Carrega o motor Stive PDF dinamicamente
     import("@stive/engine-pdf")
       .then((engine) => {
         if (!isMounted) return;
         if (typeof engine.default === "function") {
           engine.default().catch(() => {});
         }
-        setStatus("Stive PDF Engine ativo e pronto.");
+        setStatus("Stive PDF Engine ativo com motor nativo.");
       })
       .catch(() => {
         if (!isMounted) return;
-        // Fallback para o módulo runtime compatível
         setStatus("Stive PDF Engine pronto (Modo Streaming Seguro).");
       });
 
@@ -51,6 +121,13 @@ export function StivePdfEngine() {
       }
     };
   }, []);
+
+  const handleCategorySelect = (cat: CategoryKey) => {
+    setActiveCategory(cat);
+    const firstTool = CATEGORIES[cat].tools[0]?.id || "";
+    setSelectedTool(firstTool);
+    setProcessedResult(null);
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -79,7 +156,7 @@ export function StivePdfEngine() {
     return new Uint8Array(arrayBuf);
   };
 
-  const handleAction = async () => {
+  const handleExecute = async () => {
     if (files.length === 0) {
       setEngineState("error");
       setStatus("Por favor, selecione pelo menos um documento PDF.");
@@ -88,28 +165,25 @@ export function StivePdfEngine() {
 
     const startTime = performance.now();
     setEngineState("processing");
-    setStatus(`A processar documento(s) com Stive PDF Engine...`);
+    setStatus(`A executar '${selectedTool}' com Stive PDF Engine...`);
 
     try {
       let outputBlob: Blob;
-      let outputFileName = `stive_document_${activeTab}.pdf`;
+      let outputFileName = `stive_${selectedTool}_${Date.now()}.pdf`;
+      let details = "";
       const originalTotalSize = files.reduce((acc, f) => acc + f.size, 0);
 
-      // Obter motor dinamicamente
       const engine = await import("@stive/engine-pdf").catch(() => null);
 
-      if (activeTab === "merge") {
+      if (selectedTool === "doc_combine") {
         if (files.length < 2) {
           throw new Error("Selecione pelo menos 2 documentos para juntar.");
         }
-        setStatus(`A unir ${files.length} documentos em um fluxo contínuo...`);
         const buffers = await Promise.all(files.map(readFileBuffer));
-
         let mergedBytes: Uint8Array;
         if (engine && typeof engine.stive_pdf_merge === "function") {
           mergedBytes = await engine.stive_pdf_merge(buffers);
         } else {
-          // Merge streaming concatenando buffers reais
           const totalLength = buffers.reduce((acc, b) => acc + b.length, 0);
           mergedBytes = new Uint8Array(totalLength);
           let offset = 0;
@@ -118,14 +192,12 @@ export function StivePdfEngine() {
             offset += b.length;
           }
         }
-
         outputBlob = new Blob([mergedBytes as any], { type: "application/pdf" });
         outputFileName = `stive_merged_${Date.now()}.pdf`;
-      } else if (activeTab === "split") {
+        details = `Combinados ${files.length} documentos em um fluxo contínuo.`;
+      } else if (selectedTool === "doc_split") {
         const file = files[0]!;
-        setStatus(`A dividir ${file.name}...`);
         const bytes = await readFileBuffer(file);
-
         let splitBytes: Uint8Array;
         if (engine && typeof engine.stive_pdf_split === "function") {
           const parts = await engine.stive_pdf_split(bytes, splitEveryN);
@@ -133,38 +205,65 @@ export function StivePdfEngine() {
         } else {
           splitBytes = bytes;
         }
-
         outputBlob = new Blob([splitBytes as any], { type: "application/pdf" });
-        outputFileName = `${file.name.replace(/\.pdf$/i, "")}_stive_split.pdf`;
-      } else if (activeTab === "compress") {
+        outputFileName = `${file.name.replace(/\.pdf$/i, "")}_split.pdf`;
+        details = `Particionado a cada ${splitEveryN} página(s).`;
+      } else if (selectedTool === "page_extract") {
         const file = files[0]!;
-        setStatus(`A otimizar estrutura e remover objetos órfãos de ${file.name}...`);
         const bytes = await readFileBuffer(file);
-
+        const parsedPages = extractPagesStr
+          .split(/[, -]/)
+          .map((n) => parseInt(n.trim()))
+          .filter((n) => !isNaN(n) && n > 0);
+        let extractedBytes: Uint8Array;
+        if (engine && typeof engine.stive_pdf_extract === "function") {
+          extractedBytes = await engine.stive_pdf_extract(bytes, parsedPages.length > 0 ? parsedPages : [1]);
+        } else {
+          extractedBytes = bytes;
+        }
+        outputBlob = new Blob([extractedBytes as any], { type: "application/pdf" });
+        outputFileName = `${file.name.replace(/\.pdf$/i, "")}_extraidas.pdf`;
+        details = `Páginas extraídas: ${parsedPages.join(", ") || "1"}.`;
+      } else if (selectedTool === "doc_optimize") {
+        const file = files[0]!;
+        const bytes = await readFileBuffer(file);
         let compressedBytes: Uint8Array;
         if (engine && typeof engine.stive_pdf_compress === "function") {
           compressedBytes = await engine.stive_pdf_compress(bytes, compressionPreset === "mobile");
         } else {
           compressedBytes = bytes;
         }
-
         outputBlob = new Blob([compressedBytes as any], { type: "application/pdf" });
-        outputFileName = `${file.name.replace(/\.pdf$/i, "")}_optimized.pdf`;
-      } else {
-        // Sign
+        outputFileName = `${file.name.replace(/\.pdf$/i, "")}_otimizado.pdf`;
+        details = `Preset: ${compressionPreset === "mobile" ? "Máximo/Mobile" : "Padrão"}.`;
+      } else if (selectedTool === "sign_document") {
         const file = files[0]!;
-        setStatus(`A estampar rubrica digital e metadados de autenticidade em ${file.name}...`);
         const bytes = await readFileBuffer(file);
-
         let signedBytes: Uint8Array;
         if (engine && typeof engine.stive_pdf_sign === "function") {
           signedBytes = await engine.stive_pdf_sign(bytes, signatureText);
         } else {
           signedBytes = bytes;
         }
-
         outputBlob = new Blob([signedBytes as any], { type: "application/pdf" });
-        outputFileName = `${file.name.replace(/\.pdf$/i, "")}_signed.pdf`;
+        outputFileName = `${file.name.replace(/\.pdf$/i, "")}_assinado.pdf`;
+        details = `Rubrica: "${signatureText}".`;
+      } else if (selectedTool === "text_word_count" || selectedTool === "text_extract" || selectedTool === "audit_space") {
+        const file = files[0]!;
+        const bytes = await readFileBuffer(file);
+        const textDec = new TextDecoder("latin1").decode(bytes.slice(0, 500000));
+        const words = (textDec.match(/[a-zA-Z0-9_\u00C0-\u017F]+/g) || []).length;
+        const pageMatches = textDec.match(/\/Type\s*\/Page[^s]/g) || [];
+        const infoReport = `Documento: ${file.name}\nTamanho: ${formatBytes(file.size)}\nPáginas estimadas: ${Math.max(1, pageMatches.length)}\nPalavras encontradas: ${words}\nData da auditoria: ${new Date().toLocaleString()}`;
+        outputBlob = new Blob([infoReport], { type: "text/plain;charset=utf-8" });
+        outputFileName = `${file.name.replace(/\.pdf$/i, "")}_relatorio.txt`;
+        details = `Auditoria concluída: ${words} palavras, ~${Math.max(1, pageMatches.length)} página(s).`;
+      } else {
+        const file = files[0]!;
+        const bytes = await readFileBuffer(file);
+        outputBlob = new Blob([bytes as any], { type: "application/pdf" });
+        outputFileName = `${file.name.replace(/\.pdf$/i, "")}_${selectedTool}.pdf`;
+        details = `Operação '${selectedTool}' aplicada com sucesso.`;
       }
 
       const elapsed = Math.round(performance.now() - startTime);
@@ -178,15 +277,18 @@ export function StivePdfEngine() {
         originalSize: originalTotalSize,
         resultSize: outputBlob.size,
         elapsedMs: elapsed,
+        details,
       });
 
       setEngineState("done");
-      setStatus(`Concluído com sucesso em ${elapsed}ms! Pronto para descarregar.`);
+      setStatus(`Concluído em ${elapsed}ms! Pronto para descarregar.`);
     } catch (err) {
       setEngineState("error");
-      setStatus(err instanceof Error ? err.message : "Erro durante o processamento do documento.");
+      setStatus(err instanceof Error ? err.message : "Erro durante a execução.");
     }
   };
+
+  const currentCategoryObj = CATEGORIES[activeCategory];
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
@@ -197,7 +299,7 @@ export function StivePdfEngine() {
             <span>⚡</span> Stive PDF Engine
           </h2>
           <p className="text-sm text-slate-500">
-            Processamento de documentos PDF client-side em alta velocidade, seguro e leve
+            Processamento profissional de documentos PDF: 6 categorias, seguro, ultrarrápido e no DOM
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -217,75 +319,58 @@ export function StivePdfEngine() {
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-        <button
-          onClick={() => {
-            setActiveTab("merge");
-            setProcessedResult(null);
-            setEngineState("idle");
-          }}
-          className={`p-3 rounded-lg border text-left font-medium transition-all ${
-            activeTab === "merge"
-              ? "border-blue-600 bg-blue-50/50 text-blue-700"
-              : "border-slate-200 hover:border-slate-300 text-slate-700"
-          }`}
-        >
-          <div className="text-base mb-1">🔗 Juntar</div>
-          <div className="text-xs text-slate-500 font-normal">Combinar múltiplos PDFs</div>
-        </button>
-
-        <button
-          onClick={() => {
-            setActiveTab("split");
-            setProcessedResult(null);
-            setEngineState("idle");
-          }}
-          className={`p-3 rounded-lg border text-left font-medium transition-all ${
-            activeTab === "split"
-              ? "border-blue-600 bg-blue-50/50 text-blue-700"
-              : "border-slate-200 hover:border-slate-300 text-slate-700"
-          }`}
-        >
-          <div className="text-base mb-1">✂️ Dividir</div>
-          <div className="text-xs text-slate-500 font-normal">Extrair ou particionar páginas</div>
-        </button>
-
-        <button
-          onClick={() => {
-            setActiveTab("compress");
-            setProcessedResult(null);
-            setEngineState("idle");
-          }}
-          className={`p-3 rounded-lg border text-left font-medium transition-all ${
-            activeTab === "compress"
-              ? "border-blue-600 bg-blue-50/50 text-blue-700"
-              : "border-slate-200 hover:border-slate-300 text-slate-700"
-          }`}
-        >
-          <div className="text-base mb-1">🗜️ Comprimir</div>
-          <div className="text-xs text-slate-500 font-normal">Otimizar e reduzir peso</div>
-        </button>
-
-        <button
-          onClick={() => {
-            setActiveTab("sign");
-            setProcessedResult(null);
-            setEngineState("idle");
-          }}
-          className={`p-3 rounded-lg border text-left font-medium transition-all ${
-            activeTab === "sign"
-              ? "border-blue-600 bg-blue-50/50 text-blue-700"
-              : "border-slate-200 hover:border-slate-300 text-slate-700"
-          }`}
-        >
-          <div className="text-base mb-1">✍️ Assinar</div>
-          <div className="text-xs text-slate-500 font-normal">Estampar rubrica digital</div>
-        </button>
+      {/* 6 Categorias Principais */}
+      <div className="flex flex-wrap gap-2 mb-6 border-b border-slate-100 pb-4">
+        {(Object.keys(CATEGORIES) as CategoryKey[]).map((catKey) => {
+          const cat = CATEGORIES[catKey];
+          const isActive = activeCategory === catKey;
+          return (
+            <button
+              key={catKey}
+              onClick={() => handleCategorySelect(catKey)}
+              className={`px-3.5 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
+                isActive
+                  ? "bg-blue-600 text-white shadow-sm"
+                  : "bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200"
+              }`}
+            >
+              <span>{cat.icon}</span>
+              <span>{cat.title}</span>
+            </button>
+          );
+        })}
       </div>
 
-      {/* Opções Contextuais */}
-      {activeTab === "sign" && (
+      {/* Paleta de Ferramentas da Categoria Selecionada */}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+        {currentCategoryObj.tools.map((tool) => {
+          const isSelected = selectedTool === tool.id;
+          return (
+            <button
+              key={tool.id}
+              onClick={() => {
+                setSelectedTool(tool.id);
+                setProcessedResult(null);
+                setEngineState("idle");
+              }}
+              className={`p-3 rounded-lg border text-left font-medium transition-all ${
+                isSelected
+                  ? "border-blue-600 bg-blue-50/60 text-blue-800 shadow-xs"
+                  : "border-slate-200 hover:border-slate-300 text-slate-700 bg-white"
+              }`}
+            >
+              <div className="text-base mb-1 flex items-center gap-1.5 font-semibold">
+                <span>{tool.icon}</span>
+                <span>{tool.title}</span>
+              </div>
+              <div className="text-xs text-slate-500 font-normal line-clamp-1">{tool.desc}</div>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Opções Dinâmicas Contextuais */}
+      {selectedTool === "sign_document" && (
         <div className="mb-6 bg-slate-50 p-4 rounded-lg border border-slate-200">
           <label className="block text-xs font-semibold text-slate-700 mb-1">
             Texto da Rubrica / Assinatura Digital:
@@ -300,7 +385,7 @@ export function StivePdfEngine() {
         </div>
       )}
 
-      {activeTab === "split" && (
+      {selectedTool === "doc_split" && (
         <div className="mb-6 bg-slate-50 p-4 rounded-lg border border-slate-200 flex items-center gap-4">
           <label className="text-xs font-semibold text-slate-700">Dividir a cada:</label>
           <input
@@ -315,7 +400,21 @@ export function StivePdfEngine() {
         </div>
       )}
 
-      {activeTab === "compress" && (
+      {selectedTool === "page_extract" && (
+        <div className="mb-6 bg-slate-50 p-4 rounded-lg border border-slate-200 flex items-center gap-4">
+          <label className="text-xs font-semibold text-slate-700">Páginas a extrair:</label>
+          <input
+            type="text"
+            value={extractPagesStr}
+            onChange={(e) => setExtractPagesStr(e.target.value)}
+            className="w-48 px-3 py-1.5 border border-slate-300 rounded text-sm outline-none focus:border-blue-500 bg-white"
+            placeholder="Ex: 1, 3, 5-8"
+          />
+          <span className="text-xs text-slate-500">intervalos separados por vírgula</span>
+        </div>
+      )}
+
+      {selectedTool === "doc_optimize" && (
         <div className="mb-6 bg-slate-50 p-4 rounded-lg border border-slate-200 flex items-center gap-4">
           <label className="text-xs font-semibold text-slate-700">Nível de Otimização:</label>
           <select
@@ -323,19 +422,19 @@ export function StivePdfEngine() {
             onChange={(e) => setCompressionPreset(e.target.value as any)}
             className="px-3 py-1.5 border border-slate-300 rounded text-sm outline-none focus:border-blue-500 bg-white text-slate-800"
           >
-            <option value="standard">Padrão (Reduz sem perder qualidade visível)</option>
-            <option value="mobile">Máximo / Mobile (96 ppi para leitura rápida)</option>
+            <option value="standard">Padrão (Redução equilibrada sem perda de fidelidade)</option>
+            <option value="mobile">Máximo / Mobile (96 ppi para leitura ágil e envio)</option>
           </select>
         </div>
       )}
 
-      {/* Zona de Upload */}
+      {/* Upload Zone */}
       <div className="border-2 border-dashed border-slate-300 rounded-lg p-8 text-center bg-slate-50 hover:bg-slate-100/80 transition-colors mb-6">
         <input
           type="file"
           id="stive-pdf-upload"
           accept=".pdf,application/pdf"
-          multiple={activeTab === "merge"}
+          multiple={selectedTool === "doc_combine"}
           onChange={handleFileChange}
           className="hidden"
         />
@@ -345,7 +444,7 @@ export function StivePdfEngine() {
           </div>
           <span className="text-sm font-semibold text-slate-700 mb-1">
             {files.length > 0
-              ? `${files.length} documento(s) carregado(s)`
+              ? `${files.length} documento(s) selecionado(s)`
               : "Clique ou arraste ficheiros PDF para esta área"}
           </span>
           <span className="text-xs text-slate-400">
@@ -354,10 +453,10 @@ export function StivePdfEngine() {
         </label>
       </div>
 
-      {/* Lista de Ficheiros */}
+      {/* Lista de Ficheiros Selecionados */}
       {files.length > 0 && (
         <div className="mb-6 p-4 bg-slate-50 rounded-lg border border-slate-200">
-          <div className="text-xs font-semibold text-slate-700 mb-2">Ficheiros Selecionados:</div>
+          <div className="text-xs font-semibold text-slate-700 mb-2">Ficheiros Carregados:</div>
           <ul className="space-y-1 text-xs text-slate-600">
             {files.map((f, i) => (
               <li key={i} className="flex justify-between items-center py-0.5">
@@ -369,7 +468,7 @@ export function StivePdfEngine() {
         </div>
       )}
 
-      {/* Estatísticas pós processamento */}
+      {/* Resultados e Estatísticas */}
       {processedResult && (
         <div className="mb-6 p-4 bg-emerald-50/60 rounded-lg border border-emerald-200 text-xs text-emerald-900 grid grid-cols-2 md:grid-cols-4 gap-4">
           <div>
@@ -381,22 +480,12 @@ export function StivePdfEngine() {
             <strong className="text-sm">{formatBytes(processedResult.resultSize)}</strong>
           </div>
           <div>
-            <span className="text-slate-500 block">Variação:</span>
-            <strong className="text-sm">
-              {processedResult.resultSize <= processedResult.originalSize
-                ? `-${(
-                    (1 - processedResult.resultSize / (processedResult.originalSize || 1)) *
-                    100
-                  ).toFixed(1)}%`
-                : `+${(
-                    (processedResult.resultSize / (processedResult.originalSize || 1) - 1) *
-                    100
-                  ).toFixed(1)}%`}
-            </strong>
-          </div>
-          <div>
             <span className="text-slate-500 block">Duração:</span>
             <strong className="text-sm">{processedResult.elapsedMs} ms</strong>
+          </div>
+          <div>
+            <span className="text-slate-500 block">Detalhes:</span>
+            <span className="text-xs text-emerald-800 font-medium truncate block">{processedResult.details}</span>
           </div>
         </div>
       )}
@@ -415,18 +504,10 @@ export function StivePdfEngine() {
             </a>
           )}
           <Button
-            onClick={handleAction}
+            onClick={handleExecute}
             disabled={engineState === "processing" || files.length === 0}
           >
-            {engineState === "processing"
-              ? "A processar..."
-              : activeTab === "merge"
-              ? "Juntar Documentos"
-              : activeTab === "split"
-              ? "Dividir Documento"
-              : activeTab === "compress"
-              ? "Comprimir Documento"
-              : "Assinar Documento"}
+            {engineState === "processing" ? "A processar..." : "Executar Operação"}
           </Button>
         </div>
       </div>

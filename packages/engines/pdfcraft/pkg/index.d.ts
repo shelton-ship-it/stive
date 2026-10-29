@@ -1,6 +1,24 @@
 /**
  * Stive PDF Engine — WebAssembly TypeScript API definitions
  */
+export interface ToolItem {
+  name: string;
+  title: string;
+  category: string;
+  description: string;
+}
+
+export class StivePdfSession {
+  constructor();
+  open_bytes(name: string, bytes: Uint8Array): number;
+  save_bytes(doc_id: number): Uint8Array;
+  close_doc(doc_id: number): void;
+  page_count(doc_id: number): number;
+  call(doc_id: number, tool_name: string, args_json: string): string;
+  static list_tools(): string;
+  free(): void;
+}
+
 export function stive_pdf_version(): string;
 export function stive_pdf_page_count(pdf_bytes: Uint8Array): Promise<number> | number;
 export function stive_pdf_merge(buffers: Uint8Array[]): Promise<Uint8Array> | Uint8Array;
