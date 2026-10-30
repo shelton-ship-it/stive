@@ -1,0 +1,35 @@
+name: Engine category structure
+
+on:
+  pull_request:
+    paths:
+      - "packages/engines/**"
+      - "scripts/sync-engine-categories.mjs"
+      - "scripts/cleanup-engine-noise.mjs"
+      - ".github/workflows/engine-category-sync.yml"
+  push:
+    branches: [main]
+    paths:
+      - "packages/engines/**"
+      - "scripts/sync-engine-categories.mjs"
+      - "scripts/cleanup-engine-noise.mjs"
+      - ".github/workflows/engine-category-sync.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-engine-categories:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify catalog synchronization
+        run: node scripts/sync-engine-categories.mjs --check
+      - name: Detect engine directory noise
+        run: node scripts/cleanup-engine-noise.mjs
