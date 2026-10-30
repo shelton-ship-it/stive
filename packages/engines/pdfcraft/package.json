@@ -1,5 +1,8 @@
 {
-  "name": "@stive/engine-pdfcraft",
+  "name": "@stive/engine-pdf",
+  "version": "0.1.0",
+  "description": "Stive PDF Engine — WebAssembly document processor for Stive",
+  "private": true,
   "exports": {
     ".": "./pkg/index.js"
   }

@@ -16,7 +16,7 @@ export default function WorkSuiteLandingPage() {
       name: "Stive Docs",
       href: "/work/docs",
       icon: "📄",
-      desc: "Junte, divida, comprima e assine PDFs online com o motor PDFCraft.",
+      desc: "Junte, divida, comprima e assine PDFs online com o motor Stive PDF.",
       tag: "PDF",
     },
     {

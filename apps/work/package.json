@@ -12,6 +12,7 @@
     "@stive/analytics": "workspace:*",
     "@stive/auth": "workspace:*",
     "@stive/billing": "workspace:*",
+    "@stive/engine-pdf": "workspace:*",
     "@stive/i18n": "workspace:*",
     "@stive/quotas": "workspace:*",
     "@stive/ui": "workspace:*",
