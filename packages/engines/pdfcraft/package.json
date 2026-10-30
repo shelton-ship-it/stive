@@ -3,7 +3,12 @@
   "version": "0.1.0",
   "description": "Stive PDF Engine — WebAssembly document processor for Stive",
   "private": true,
+  "main": "./pkg/index.js",
+  "types": "./pkg/index.d.ts",
   "exports": {
-    ".": "./pkg/index.js"
+    ".": {
+      "types": "./pkg/index.d.ts",
+      "default": "./pkg/index.js"
+    }
   }
 }
