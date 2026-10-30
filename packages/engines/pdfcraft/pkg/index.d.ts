@@ -1,6 +1,6 @@
 /**
  * Stive PDF Engine — WebAssembly TypeScript API definitions
- * Universal Headless Session with 90+ tools across 6 categories
+ * Only operations with real implementations are advertised as successful.
  */
 
 export interface ToolItem {
@@ -29,6 +29,7 @@ export function stive_pdf_merge(buffers: Uint8Array[]): Promise<Uint8Array> | Ui
 export function stive_pdf_extract(pdf_bytes: Uint8Array, pages: number[]): Promise<Uint8Array> | Uint8Array;
 export function stive_pdf_split(pdf_bytes: Uint8Array, every_n_pages: number): Promise<Uint8Array[]> | Uint8Array[];
 export function stive_pdf_compress(pdf_bytes: Uint8Array, mobile_preset?: boolean): Promise<Uint8Array> | Uint8Array;
+/** Throws: real PAdES/CMS signing is not implemented. */
 export function stive_pdf_sign(pdf_bytes: Uint8Array, signature_text: string): Promise<Uint8Array> | Uint8Array;
 
 export default function init(): Promise<void>;
