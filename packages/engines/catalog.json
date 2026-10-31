@@ -1,0 +1,53 @@
+{
+  "$schema": "./catalog.schema.json",
+  "version": 1,
+  "categories": [
+    {
+      "id": "documents",
+      "dashboard": "categories/documents/dashboard",
+      "engines": [
+        "pdfcraft",
+        "wordcraft",
+        "excalidraw",
+        "filee"
+      ]
+    },
+    {
+      "id": "media",
+      "dashboard": "categories/media/dashboard",
+      "engines": [
+        "filmcraft",
+        "soundcraft",
+        "lightcraft",
+        "lossless-cut"
+      ]
+    },
+    {
+      "id": "creative",
+      "dashboard": "categories/creative/dashboard",
+      "engines": [
+        "designcraft",
+        "vectorcraft",
+        "photocraft",
+        "deckcraft",
+        "gridcraft"
+      ]
+    },
+    {
+      "id": "productivity",
+      "dashboard": "categories/productivity/dashboard",
+      "engines": [
+        "cap",
+        "piik",
+        "strix"
+      ]
+    },
+    {
+      "id": "effects",
+      "dashboard": "categories/effects/dashboard",
+      "engines": [
+        "effectcraft"
+      ]
+    }
+  ]
+}
