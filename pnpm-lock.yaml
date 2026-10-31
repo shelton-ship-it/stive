@@ -18,7 +18,7 @@ importers:
         specifier: ^5.8.2
         version: 5.9.3
 
-  packages/ads:
+  packages/user/ads:
     devDependencies:
       '@stive/tsconfig':
         specifier: workspace:*
@@ -30,7 +30,7 @@ importers:
         specifier: ^5.8.2
         version: 5.9.3
 
-  packages/analytics:
+  packages/user/analytics:
     devDependencies:
       '@stive/tsconfig':
         specifier: workspace:*
@@ -39,7 +39,7 @@ importers:
         specifier: ^5.8.2
         version: 5.9.3
 
-  packages/auth:
+  packages/user/auth:
     devDependencies:
       '@stive/tsconfig':
         specifier: workspace:*
@@ -48,7 +48,7 @@ importers:
         specifier: ^5.8.2
         version: 5.9.3
 
-  packages/billing:
+  packages/user/billing:
     devDependencies:
       '@stive/tsconfig':
         specifier: workspace:*
@@ -57,7 +57,7 @@ importers:
         specifier: ^5.8.2
         version: 5.9.3
 
-  packages/db:
+  packages/user/db:
     devDependencies:
       '@stive/tsconfig':
         specifier: workspace:*
@@ -66,7 +66,7 @@ importers:
         specifier: ^5.8.2
         version: 5.9.3
 
-  packages/email:
+  packages/user/email:
     devDependencies:
       '@stive/tsconfig':
         specifier: workspace:*
@@ -75,7 +75,7 @@ importers:
         specifier: ^5.8.2
         version: 5.9.3
 
-  packages/files:
+  packages/user/files:
     devDependencies:
       '@stive/tsconfig':
         specifier: workspace:*
@@ -84,7 +84,7 @@ importers:
         specifier: ^5.8.2
         version: 5.9.3
 
-  packages/i18n:
+  packages/user/i18n:
     devDependencies:
       '@stive/tsconfig':
         specifier: workspace:*
@@ -93,7 +93,7 @@ importers:
         specifier: ^5.8.2
         version: 5.9.3
 
-  packages/quotas:
+  packages/user/quotas:
     devDependencies:
       '@stive/tsconfig':
         specifier: workspace:*
@@ -102,7 +102,7 @@ importers:
         specifier: ^5.8.2
         version: 5.9.3
 
-  packages/realtime:
+  packages/user/realtime:
     devDependencies:
       '@stive/tsconfig':
         specifier: workspace:*
@@ -111,7 +111,7 @@ importers:
         specifier: ^5.8.2
         version: 5.9.3
 
-  packages/types:
+  packages/user/types:
     devDependencies:
       '@stive/tsconfig':
         specifier: workspace:*
@@ -120,7 +120,7 @@ importers:
         specifier: ^5.8.2
         version: 5.9.3
 
-  packages/ui:
+  packages/user/ui:
     devDependencies:
       '@stive/tsconfig':
         specifier: workspace:*
@@ -132,7 +132,7 @@ importers:
         specifier: ^5.8.2
         version: 5.9.3
 
-  packages/utils:
+  packages/user/utils:
     devDependencies:
       '@stive/tsconfig':
         specifier: workspace:*
